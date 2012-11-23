@@ -2,34 +2,37 @@
   (:require [low.jna :refer [import-jna-function]])
   (:import (com.sun.jna Function Pointer)))
 
-(def llvm-api '[[LLVMDoubleType Pointer 0]
-                [LLVMInt32Type Pointer 0]
-                [LLVMInt64Type Pointer 0]
-                [LLVMConstString Pointer 3]
-                [LLVMRecompileAndRelinkFunction Pointer 2]
-                [LLVMConstInt Pointer 3]
-                [LLVMConstReal Pointer 2]
-                [LLVMModuleCreateWithName Pointer 1]
-                [LLVMBuildCall Pointer 5]
-                [LLVMDisposeModule Boolean 1]
-                [LLVMBuildRet Pointer 2]
-                [LLVMDumpModule Void 1]
-                [LLVMWriteBitcodeToFile Integer 2]
-                [LLVMCreateBuilder Pointer 0]
-                [LLVMModuleCreateWithName Pointer 1]
-                [LLVMBuildGlobalString Pointer 3]
-                [LLVMBuildGlobalStringPtr Pointer 3]
-                [LLVMGetTypeName Pointer 2]
-                [LLVMAppendBasicBlock Pointer 2]
-                [LLVMPositionBuilderAtEnd Pointer 2]
-                [LLVMTypeOf Pointer 1]
-                [LLVMOpaqueType Pointer 0]
-                [LLVMFunctionType Pointer 4]
-                [LLVMAddFunction Pointer 3]])
+(def llvm-api [[:DoubleType Pointer 0]
+               [:Int32Type Pointer 0]
+               [:Int64Type Pointer 0]
+               [:ConstString Pointer 3]
+               [:RecompileAndRelinkFunction Pointer 2]
+               [:ConstInt Pointer 3]
+               [:ConstReal Pointer 2]
+               [:ModuleCreateWithName Pointer 1]
+               [:BuildCall Pointer 5]
+               [:DisposeModule Boolean 1]
+               [:BuildRet Pointer 2]
+               [:DumpModule Void 1]
+               [:WriteBitcodeToFile Integer 2]
+               [:CreateBuilder Pointer 0]
+               [:ModuleCreateWithName Pointer 1]
+               [:BuildGlobalString Pointer 3]
+               [:BuildGlobalStringPtr Pointer 3]
+               [:AppendBasicBlock Pointer 2]
+               [:PositionBuilderAtEnd Pointer 2]
+               [:TypeOf Pointer 1]
+               [:FunctionType Pointer 4]
+               [:AddFunction Pointer 3]])
 
-(defmacro import-llvm-functions []
-  `(do
-     ~@(for [[f-name ret-type arg-len] llvm-api]
-         (list 'import-jna-function 'LLVM-3.2 f-name (eval ret-type) arg-len))))
+(def ^:private llvm-function-map (atom {}))
 
-(import-llvm-functions)
+(defn setup-llvm [ver]
+  (let [llvm-ver (str "LLVM-" ver)]
+   (doseq [[f-name ret-type args-len] llvm-api]
+     (swap! llvm-function-map assoc f-name
+            (import-jna-function llvm-ver (str "LLVM" (name f-name)) ret-type args-len)))))
+
+(defn LLVM [f & args]
+  (apply (@llvm-function-map f) args))
+
