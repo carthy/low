@@ -32,7 +32,7 @@
 (def visibility
   [:default :hidden :protected])
 
-(def instruction-call-conv
+(def call-conv
   [:C :fast :cold :x86-std :x86-fast])
 
 (def attribute
@@ -47,3 +47,19 @@
            :no-red-zone :no-implicit-float :naked
            :inline-hint :stack-alignment :returns
            :uw-table :non-lazy-bind]))
+
+(def int-predicate
+  (zipmap (range 32 42) [:eq :ne :ugt :uge :ult
+                         :ule :sgt :sge :slt :sle]))
+
+(def real-predicate
+  [nil :oeq :ogt :oge :olt :ole :one :ord
+   :uno :ueq :ugt :uge :ult :ule :une])
+
+(def atomic-bin-op
+  [:xchg :add :sub :and :nand :or :xor
+   :max :min :umax :umin])
+
+(def atomic-ordering
+  [:no-atomic :unordered :monotonic :consume :acquire
+   :release :acquire-release :sequentially-consistent])
