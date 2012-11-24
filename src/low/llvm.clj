@@ -156,7 +156,7 @@
    [:IsAIntrinsicInst Pointer 1]
    [:IsADbgInfoIntrinsic Pointer 1]
    [:IsADbgDeclareInst Pointer 1]
-   [:IsAEHSelectorInst Pointer 1]
+   ;;[:IsAEHSelectorInst Pointer 1]
    [:IsAMemIntrinsic Pointer 1]
    [:IsAMemCpyInst Pointer 1]
    [:IsAMemMoveInst Pointer 1]
