@@ -1,6 +1,6 @@
 (ns low.llvm
   (:require [low.jna :refer [import-function load-lib]]
-            [low.llvm.types-enum :refer-all])
+            [low.llvm.types-enum :refer :all])
   (:import (com.sun.jna Pointer)))
 
 (def ^:private llvm-api
@@ -546,8 +546,13 @@
 (def ^:private llvm-lib (promise))
 
 (defn import-llvm-function [f-name ret-type args-len]
-  (swap! llvm-function-map assoc f-name
-         (import-function @llvm-lib (str "LLVM" (name f-name)) ret-type args-len)))
+  (let [[ret-type wrapping-fun]
+        (if (class? ret-type)
+          [ret-type identity]
+          [Integer (fn [f] (fn [& args] (ret-type (apply f args))))])]
+    (swap! llvm-function-map assoc f-name
+           (wrapping-fun
+            (import-function @llvm-lib (str "LLVM" (name f-name)) ret-type args-len)))))
 
 (defn setup-llvm [ver]
   (deliver llvm-lib (load-lib (str "LLVM-" ver)))
