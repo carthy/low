@@ -1,10 +1,16 @@
 (ns low.jna
-  (:import com.sun.jna.Function))
+  (:import (com.sun.jna Function NativeLibrary)))
 
-(defn import-jna-function [lib f-name ret-type args-len]
-  "Returns a  clojure function that invokes the matching function from lib.
-Example: (import-jna-function \"LLVM-3.2\" \"LLVMTypeOf\" com.sun.jna.Pointer 1)"
-  (let [f (Function/getFunction lib f-name)]
+(defn load-lib [lib]
+  (NativeLibrary/getInstance lib))
+
+(defn get-function [lib name]
+  (if (string? lib)
+    (Function/getFunction lib name)
+    (.getFunction ^NativeLibrary lib name)))
+
+(defn import-function [lib name ret-type args-len]
+  (let [f (get-function lib name)]
     (fn [& args]
       (assert (== args-len (count args)))
       (.invoke f ret-type (to-array args)))))
