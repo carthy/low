@@ -562,4 +562,4 @@
 (defn LLVM [f & args]
   (if-let [f (@llvm-function-map f)]
     (apply f args)
-    (ex-info "Function not found" {:fn-name (str "LLVM" f)})))
+    (throw (ex-info "Function not found" {:fn-name (str "LLVM" f)}))))
