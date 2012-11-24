@@ -550,5 +550,6 @@
            (import-function @llvm-lib (str "LLVM" (name f-name)) ret-type args-len))))
 
 (defn LLVM [f & args]
-  (apply (@llvm-function-map f) args))
-
+  (if-let [f (@llvm-function-map f)]
+    (apply f arg)
+    (ex-info "Function not found" {:fn-name (str "LLVM" f)})))
