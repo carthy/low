@@ -1,12 +1,13 @@
 (ns low.llvm
-  (:require [low.jna :refer [import-function load-lib]])
+  (:require [low.jna :refer [import-function load-lib]]
+            [low.llvm.types-enum :refer-all])
   (:import (com.sun.jna Pointer)))
 
 (def ^:private llvm-api
   [[:CreateTargetData Pointer 1]
    [:AddTargetData Void 0]
    [:CopyStringRepOfTargetData Pointer 0]
-   [:ByteOrder Integer 0] ;; ValuedEnum
+   [:ByteOrder byte-ordering  0]
    [:PointerSize Void 0]
    [:IntPtrType Pointer 0]
    [:SizeOfTypeInBits Void 0]
@@ -75,7 +76,7 @@
    [:DumpModule Void 1]
    [:SetModuleInlineAsm Void 2]
    [:GetModuleContext Pointer 1]
-   [:GetTypeKind Integer 1] ;; TypeEnum
+   [:GetTypeKind types-kind 1]
    [:GetTypeContext Pointer 1]
    [:Int1TypeInContext Pointer 1]
    [:Int8TypeInContext Pointer 1]
@@ -228,7 +229,7 @@
    [:ConstArray Pointer 3]
    [:ConstStruct Pointer 3]
    [:ConstVector Pointer 2]
-   [:GetConstOpcode Integer 1] ;;ValuedEnum
+   [:GetConstOpcode opcode 1]
    [:AlignOf Pointer 1]
    [:SizeOf Pointer 1]
    [:ConstNeg Pointer 1]
@@ -293,11 +294,11 @@
    [:BlockAddress Pointer 2]
    [:GetGlobalParent Pointer 1]
    [:IsDeclaration Integer 1]
-   [:GetLinkage Integer 1] ;; ValuedEnum
+   [:GetLinkage linkage 1]
    [:SetLinkage Void 2]
    [:GetSection Pointer 1]
    [:SetSection Void 2]
-   [:GetVisibility Integer 1] ;; ValuedEnum
+   [:GetVisibility visibility 1]
    [:SetVisibility Void 2]
    [:GetAlignment Void 1]
    [:SetAlignment Void 2]
@@ -329,7 +330,7 @@
    [:GetGC Pointer 1]
    [:SetGC Void 2]
    [:AddFunctionAttr Void 2]
-   [:GetFunctionAttr Integer 1] ;; ValuedEnum
+   [:GetFunctionAttr attribute 1]
    [:RemoveFunctionAttr Void 2]
    [:CountParams Integer 1]
    [:GetParams Void 2]
@@ -341,7 +342,7 @@
    [:GetPreviousParam Pointer 1]
    [:AddAttribute Void 2]
    [:RemoveAttribute Void 2]
-   [:GetAttribute Integer 1] ;; ValuedEnum
+   [:GetAttribute attribute 1]
    [:SetParamAlignment Void 2]
    [:BasicBlockAsValue Pointer 1]
    [:ValueIsBasicBlock Integer 1]
@@ -367,7 +368,7 @@
    [:GetNextInstruction Pointer 1]
    [:GetPreviousInstruction Pointer 1]
    [:SetInstructionCallConv Void 2]
-   [:GetInstructionCallConv Integer 1]
+   [:GetInstructionCallConv instruction-call-conv 1]
    [:AddInstrAttribute Void 3]
    [:RemoveInstrAttribute Void 3]
    [:SetInstrParamAlignment Void 3]
