@@ -1,12 +1,31 @@
-(def byte-ordering
+(defn- get-keys [coll]
+  (if (map? coll)
+    (keys coll)
+    (range (count coll))))
+
+(defn- get-values [coll]
+  (if (map? coll)
+    (vals coll)
+    coll))
+
+(defmacro ^:private  def-enum [name coll]
+  `(let [coll# ~coll
+         r-coll# (zipmap (get-values coll#) (get-keys coll#))]
+     (def ~name
+       (fn [key#]
+         (if (number? key#)
+           (coll# key#)
+           (r-coll# key#))))))
+
+(def-enum byte-ordering
   [:big-endian :little-endian])
 
-(def types-kind
+(def-enum types-kind
   [:void :half :float :double :X86FP80 :FP128
    :PPC_FP128 :label :integer :function :struct
    :array :pointer :opaque :vector :metadata :X86_MMX])
 
-(def opcode
+(def-enum opcode
   [nil :ret :br :switch :indirect-br :invoke
    nil :unreachable :add :fadd :sub :fsub
    :mul :fmul :udiv :sdiv :fdiv :urem :srem
@@ -20,20 +39,20 @@
    :insert-value :fence :atomic-cmp-xchg
    :atomic-rmw :resume :landing-pad])
 
-(def linkage
+(def-enum linkage
   [:external :available-external :link-once-any
-   :link-once-odr :waek-any :weak-odf :appending
+   :link-once-odr :weak-any :weak-odr :appending
    :internal :private :dll-import :dll-export
    :external-weak :ghost :common :linker-private
-   :linker-private-weak :linkage-private-weak-def-auto])
+   :linker-private-weak :linker-private-weak-def-auto])
 
-(def visibility
+(def-enum visibility
   [:default :hidden :protected])
 
-(def call-conv
+(def-enum call-conv
   {0 :C 8 :fast 9 :cold 64 :x86-std 65 :x86-fast})
 
-(def attribute
+(def-enum attribute
   (zipmap (concat (map (partial bit-shift-left 1) (range 16))
                   [2031616 2097152 4194304 8388608 16777216
                    33554432 469762048 536870912 1073741824 2147483648])
@@ -43,25 +62,24 @@
            :optimize-for-size :stack-protect
            :stack-protect-req :alignment :no-capture
            :no-red-zone :no-implicit-float :naked
-           :inline-hint :stack-alignment :returns
+           :inline-hint :stack-alignment :returns-twice
            :uw-table :non-lazy-bind]))
 
-(def int-predicate
+(def-enum int-predicate
   (zipmap (range 32 42) [:eq :ne :ugt :uge :ult
                          :ule :sgt :sge :slt :sle]))
 
-(def real-predicate
+(def-enum real-predicate
   [nil :oeq :ogt :oge :olt :ole :one :ord
    :uno :ueq :ugt :uge :ult :ule :une])
 
-(def atomic-bin-op
+(def-enum atomic-bin-op
   [:xchg :add :sub :and :nand :or :xor
    :max :min :umax :umin])
 
-(def atomic-ordering
+(def-enum atomic-ordering
   [:no-atomic :unordered :monotonic :consume :acquire
    :release :acquire-release :sequentially-consistent])
-
 
 (def ^:private llvm-api
   [[:CreateTargetData Pointer 1]
