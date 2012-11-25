@@ -368,7 +368,7 @@
    [:GetNextInstruction Pointer 1]
    [:GetPreviousInstruction Pointer 1]
    [:SetInstructionCallConv Void 2]
-   [:GetInstructionCallConv instruction-call-conv 1]
+   [:GetInstructionCallConv call-conv 1]
    [:AddInstrAttribute Void 3]
    [:RemoveInstrAttribute Void 3]
    [:SetInstrParamAlignment Void 3]
