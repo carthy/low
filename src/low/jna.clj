@@ -54,6 +54,13 @@
       Number
       t)))
 
+(defn virtual-type [t]
+  (if (map? t)
+    (:name (:type t))
+    (if (class? t)
+      t
+      (class t))))
+
 (defn matching-types [args r]
   (every? true? (map = (map get-type* args)
                      (map get-type* r))))
