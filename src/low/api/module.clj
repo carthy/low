@@ -1,5 +1,5 @@
 (ns low.api.module
-  (:require [low.llvm :refer LLVM]))
+  (:require [low.llvm :refer [LLVM]]))
 
 (defn create
   ([^String name]
