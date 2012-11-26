@@ -1,5 +1,7 @@
 (ns low.jna
-  (:import (com.sun.jna Function NativeLibrary Pointer)))
+  (:import
+   (clojure.lang IDeref IRecord)
+   (com.sun.jna Function NativeLibrary Pointer)))
 
 (defn get-keys [coll]
   (if (map? coll)
@@ -40,10 +42,10 @@
 
 (defn get-type [t]
   (if (map? t)
-     (get-type (:type t))
-     (if (class? t)
-       t
-       (class t))))
+    (get-type (:type t))
+    (if (class? t)
+      t
+      (class t))))
 
 (defn get-type* [t]
   (let [t (get-type t)]
@@ -57,10 +59,15 @@
                      (map get-type* r))))
 
 (defn adjust [args r]
-  (let [ret (map #(if (map? %) (:ret %) %) r)]
+  (let [ret (map #(if (instance? ReturnExpr %) @% %) r)]
     (map #((or (when (map? %) (:fn %))
                identity)
            %2) args ret)))
+
+(defrecord ReturnExpr [ret type]
+  IDeref
+  (deref [this] ret))
+(prefer-method print-method IDeref IRecord)
 
 (defn import-function [lib name args ret-type]
   (let [f (get-function lib name)
@@ -69,6 +76,7 @@
               (:fn ret-type))]
     (fn [& r]
       (assert (matching-types args r))
-      {:ret ((or fun identity)
-             (.invoke f ret-class (to-array (adjust args r))))
-       :type ret-type})))
+      (map->ReturnExpr
+       {:ret ((or fun identity)
+              (.invoke f ret-class (to-array (adjust args r))))
+        :type ret-type}))))
