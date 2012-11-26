@@ -2,9 +2,9 @@
   (:require [low.jna :refer :all :rename {def-enum def-enum*}])
   (:import (com.sun.jna Pointer)))
 
-(def ^:private llvm-function-map (atom {}))
-(def ^:private llvm-lib (promise))
-(def ^:private llvm-version (promise))
+(defonce ^:private llvm-function-map (atom {}))
+(defonce ^:private llvm-lib (promise))
+(defonce ^:private llvm-version (promise))
 
 (defn import-llvm-function [f-name args ret-type]
   (swap! llvm-function-map assoc f-name
