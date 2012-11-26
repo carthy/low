@@ -26,7 +26,7 @@
   (load "llvm/api")
   (doseq [[f-name args ret-type versions] llvm-api]
     (when (versions ver)
-        (import-llvm-function f-name args ret-type))))
+      (import-llvm-function f-name args ret-type))))
 
 (defn LLVM [f & args]
   (if-let [f (@llvm-function-map f)]

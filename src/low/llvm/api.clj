@@ -79,43 +79,18 @@
 
 (def-pointers
   ModuleRef
-  OpaqueModule
-
   ContextRef
-  OpaqueContext
-
   TypeRef
-  OpaqueType
-
   ValueRef
-  OpaqueValue
-
   BasicBlockRef
-  OpaqueBasicBlock
-
   BuilderRef
-  OpaqueBuilder
-
   MemoryBufferRef
-  OpaqueMemoryBuffer
-
   PassManagerRef
-  OpaquePassManager
-
   PassManagerBuilderRef
-  OpaquePassManagerBuilder
-
   UseRef
-  OpaqueUse
-
   TargetDataRef
-  OpaqueTargetData
-
   ObjectFileRef
-  OpaqueObjectFile
-
   SectionIteratorRef
-  OpaqueSectionIterator
 
   TypeRefPtr
   ValueRefPtr
@@ -124,11 +99,13 @@
   BytePtr)
 
 (def ^:private llvm-api
-  [[:ContextCreate [] ContextRef #{3.0 3.1}]
+  [;; Context
+   [:ContextCreate [] ContextRef #{3.0 3.1}]
    [:GetGlobalContext [] ContextRef #{3.0 3.1}]
    [:ContextDispose [ContextRef] Void #{3.0 3.1}]
    [:GetMDKindIDInContext [ContextRef String Integer] Integer #{3.0 3.1}]
    [:GetMDKindID [String Integer] Integer #{3.0 3.1}]
+   ;; Module
    [:ModuleCreateWithNameInContext [String ContextRef] ModuleRef #{3.0 3.1}]
    [:ModuleCreateWithName [String] ModuleRef #{3.0 3.1}]
    [:DisposeModule [ModuleRef] Void #{3.0 3.1}]
@@ -137,7 +114,26 @@
    [:GetTarget [ModuleRef] String #{3.0 3.1}]
    [:SetTarget [ModuleRef String] Void #{3.0 3.1}]
    [:DumpModule [ModuleRef] Void #{3.0 3.1}]
+   #_[:LLVMPrintModuleToFile [ModuleRef String StringPtr] bool #{3.0 3.1}]
    [:SetModuleInlineAsm [ModuleRef String] Void #{3.0 3.1}]
+   [:GetModuleContext [ModuleRef] ContextRef #{3.0 3.1}]
+   [:GetTypeByName [ModuleRef String] TypeRef #{3.0 3.1}]
+   #_[:GetNamedMetadataNumOperands [ModuleRef String] Integer]
+   #_[:GetNamedMetadataOperands [ModuleRef String ValueRefPtr] Void]
+   [:AddFunction [ModuleRef String TypeRef] ValueRef #{3.0 3.1}]
+   [:GetNamedFunction [ModuleRef String] ValueRef #{3.0 3.1}]
+   [:GetFirstFunction [ModuleRef] ValueRef #{3.0 3.1}]
+   [:GetLastFunction [ModuleRef] ValueRef #{3.0 3.1}]
+   [:AddGlobal [ModuleRef TypeRef String] ValueRef #{3.0 3.1}]
+   [:AddGlobalInAddressSpace [ModuleRef TypeRef String Integer] ValueRef #{3.0 3.1}]
+   [:GetNamedGlobal [ModuleRef String] ValueRef #{3.0 3.1}]
+   [:GetFirstGlobal [ModuleRef] ValueRef #{3.0 3.1}]
+   [:GetLastGlobal [ModuleRef] ValueRef #{3.0 3.1}]
+   [:AddAlias [ModuleRef TypeRef ValueRef String] ValueRef #{3.0 3.1}]
+   ;; Function
+   [:GetNextFunction [ValueRef] ValueRef #{3.0 3.1}]
+   [:GetPreviousFunction [ValueRef] ValueRef #{3.0 3.1}]
+   [:DeleteFunction [ValueRef] Void #{3.0 3.1}]
    [:GetTypeKind [TypeRef] type-kind #{3.0 3.1}]
    [:GetTypeContext [TypeRef] ContextRef #{3.0 3.1}]
    [:Int1TypeInContext [ContextRef] TypeRef #{3.0 3.1}]
@@ -182,10 +178,8 @@
    [:GetVectorSize [TypeRef] Integer #{3.0 3.1}]
    [:VoidTypeInContext [ContextRef] TypeRef #{3.0 3.1}]
    [:LabelTypeInContext [ContextRef] TypeRef #{3.0 3.1}]
-   #_[:MetadataTypeInContext [ContextRef] TypeRef]
    [:VoidType [] TypeRef #{3.0 3.1}]
    [:LabelType [] TypeRef #{3.0 3.1}]
-   #_[:MetadataType [] TypeRef]
    [:TypeOf [ValueRef] TypeRef #{3.0 3.1}]
    [:GetValueName [ValueRef] String #{3.0 3.1}]
    [:SetValueName [ValueRef String] Void #{3.0 3.1}]
@@ -211,7 +205,6 @@
    [:MDString [String Integer] ValueRef #{3.0 3.1}]
    [:MDNodeInContext [ContextRef ValueRefPtr Integer] ValueRef #{3.0 3.1}]
    [:MDNode [ValueRefPtr Integer] ValueRef #{3.0 3.1}]
-   #_[:AddNamedMetadataOperand [ModuleRef String ValueRef] Void]
    [:ConstInt [TypeRef Long bool] ValueRef #{3.0 3.1}]
    [:ConstIntOfString [TypeRef String BytePtr] ValueRef #{3.0 3.1}]
    [:ConstIntOfStringAndSize [TypeRef String Integer BytePtr] ValueRef #{3.0 3.1}]
@@ -296,11 +289,6 @@
    [:SetVisibility [ValueRef visibility] Void #{3.0 3.1}]
    [:GetAlignment [ValueRef] Integer #{3.0 3.1}]
    [:SetAlignment [ValueRef Integer] Void #{3.0 3.1}]
-   [:AddGlobal [ModuleRef TypeRef String] ValueRef #{3.0 3.1}]
-   [:AddGlobalInAddressSpace [ModuleRef TypeRef String Integer] ValueRef #{3.0 3.1}]
-   [:GetNamedGlobal [ModuleRef String] ValueRef #{3.0 3.1}]
-   [:GetFirstGlobal [ModuleRef] ValueRef #{3.0 3.1}]
-   [:GetLastGlobal [ModuleRef] ValueRef #{3.0 3.1}]
    [:GetNextGlobal [ValueRef] ValueRef #{3.0 3.1}]
    [:GetPreviousGlobal [ValueRef] ValueRef #{3.0 3.1}]
    [:DeleteGlobal [ValueRef] Void #{3.0 3.1}]
@@ -310,15 +298,6 @@
    [:SetThreadLocal [ValueRef bool] Void #{3.0 3.1}]
    [:IsGlobalConstant [ValueRef] bool #{3.0 3.1}]
    [:SetGlobalConstant [ValueRef bool] Void #{3.0 3.1}]
-   [:AddAlias [ModuleRef TypeRef ValueRef String] ValueRef #{3.0 3.1}]
-   [:AddFunction [ModuleRef String TypeRef] ValueRef #{3.0 3.1}]
-   [:GetNamedFunction [ModuleRef String] ValueRef #{3.0 3.1}]
-   [:GetFirstFunction [ModuleRef] ValueRef #{3.0 3.1}]
-   [:GetLastFunction [ModuleRef] ValueRef #{3.0 3.1}]
-   [:GetNextFunction [ValueRef] ValueRef #{3.0 3.1}]
-   [:GetPreviousFunction [ValueRef] ValueRef #{3.0 3.1}]
-   [:DeleteFunction [ValueRef] Void #{3.0 3.1}]
-   #_[:GetOrInsertFunction [ModuleRef String TypeRef] ValueRef]
    [:GetIntrinsicID [ValueRef] Integer #{3.0 3.1}]
    [:GetFunctionCallConv [ValueRef] call-conv #{3.0 3.1}]
    [:SetFunctionCallConv [ValueRef call-conv] Void #{3.0 3.1}]
@@ -475,7 +454,6 @@
    [:BuildIsNull [BuilderRef ValueRef String] ValueRef #{3.0 3.1}]
    [:BuildIsNotNull [BuilderRef ValueRef String] ValueRef #{3.0 3.1}]
    [:BuildPtrDiff [BuilderRef ValueRef ValueRef String] ValueRef #{3.0 3.1}]
-   #_[:BuildAtomicRMW [BuilderRef atomic-bin-op ValueRef ValueRef atomic-ordering] ValueRef]
    [:IsATerminatorInst [ValueRef] ValueRef #{3.0 3.1}]
    [:WriteBitcodeToFile [ModuleRef String] Integer #{3.0 3.1}]
    [:CreateTargetData [String] TargetDataRef #{3.0 3.1}]
@@ -548,5 +526,4 @@
    [:GetSectionContents [SectionIteratorRef] String #{3.0 3.1}]
    [:StructCreateNamed [ContextRef String] TypeRef #{3.0 3.1}]
    [:StructSetBody [TypeRef TypeRefPtr Integer bool] Void #{3.0 3.1}]
-   [:ConstNamedStruct [TypeRef ValueRefPtr Integer] ValueRef #{3.0 3.1}]
-   #_[:LinkModules [ModuleRef ModuleRef] bool]])
+   [:ConstNamedStruct [TypeRef ValueRefPtr Integer] ValueRef #{3.0 3.1}]])
