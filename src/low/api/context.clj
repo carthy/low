@@ -4,7 +4,7 @@
 (defn create []
   (LLVM :ContextCreate))
 
-(defn global-context
+(defn context
   ([]
      (LLVM :GetGlobalContext))
   ([module]
