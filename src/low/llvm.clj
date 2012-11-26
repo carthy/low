@@ -23,7 +23,7 @@
 (defn setup-llvm [ver]
   (deliver llvm-version ver)
   (deliver llvm-lib (load-lib (str "LLVM-" ver)))
-  (load "llvm_api")
+  (load "llvm/api")
   (doseq [[f-name args ret-type versions] llvm-api]
     (when (versions ver)
         (import-llvm-function f-name args ret-type))))
