@@ -65,16 +65,16 @@
   (every? true? (map = (map get-type* args)
                      (map get-type* r))))
 
+(defrecord ReturnExpr [ret type]
+  IDeref
+  (deref [this] ret))
+(prefer-method print-method IDeref IRecord)
+
 (defn adjust [args r]
   (let [ret (map #(if (instance? ReturnExpr %) @% %) r)]
     (map #((or (when (map? %) (:fn %))
                identity)
            %2) args ret)))
-
-(defrecord ReturnExpr [ret type]
-  IDeref
-  (deref [this] ret))
-(prefer-method print-method IDeref IRecord)
 
 (defn import-function [lib name args ret-type]
   (let [f (get-function lib name)
