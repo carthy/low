@@ -5,4 +5,4 @@ LLVM for Clojure.
 
 NOTE
 ====
-Currently only LLVM-3.1 is supported.
+Only llvm-3.0 and llvm-3.1 are currently supported.
