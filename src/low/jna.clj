@@ -50,7 +50,8 @@
 (defn get-type* [t]
   (let [t (get-type t)]
     (if (or (= Integer t)
-            (= Long t))
+            (= Long t)
+            (= Boolean t))
       Number
       t)))
 
