@@ -88,3 +88,7 @@
        {:ret ((or fun identity)
               (.invoke f ret-class (to-array (adjust args r))))
         :type ret-type}))))
+
+(defn array-type [type seq]
+  (map->ReturnExpr {:ret (into-array (map deref seq))
+                    :type type}))
