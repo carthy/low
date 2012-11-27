@@ -1,15 +1,28 @@
-(def-enum byte-ordering
+(def-enum attribute
   #{3.0 3.1}
-  [:big-endian :little-endian])
+  (zipmap (map #(bit-shift-left (or ({16 31 26 7} %) 1) %) (range 32))
+          [:z-ext :s-ext :no-return :in-reg :struct-ret
+           :no-unwind :no-alias :by-val :nest :read-none
+           :read-only :no-inline :always-inline
+           :optimize-for-size :stack-protect
+           :stack-protect-req :alignment :no-capture
+           :no-red-zone :no-implicit-float :naked
+           :inline-hint :stack-alignment :returns-twice
+           :uw-table :non-lazy-bind]))
 
 (def-enum type-kind
+  #{3.0}
+  [:void :float :double :X86FP80 :FP128 :PPC_FP128
+   :label :integer :function :struct :array
+   :pointer :opaque :vector :metadata :X86_MMX]
   #{3.1}
-  [:void :half :float :double :X86FP80 :FP128
+  [:void :half :float :double :X86_FP80 :FP128
    :PPC_FP128 :label :integer :function :struct
-   :array :pointer :opaque :vector :metadata :X86_MMX])
+   :array :pointer :vector :metadata :X86_MMX])
 
+;; we don't support :unwind either for 3.0
 (def-enum opcode
-  #{3.1}
+  #{3.0 3.1}
   [nil :ret :br :switch :indirect-br :invoke
    nil :unreachable :add :fadd :sub :fsub
    :mul :fmul :udiv :sdiv :fdiv :urem :srem
@@ -24,8 +37,8 @@
    :atomic-rmw :resume :landing-pad])
 
 (def-enum linkage
-  #{3.1}
-  [:external :available-external :link-once-any
+  #{3.0 3.1}
+  [:external :available-externally :link-once-any
    :link-once-odr :weak-any :weak-odr :appending
    :internal :private :dll-import :dll-export
    :external-weak :ghost :common :linker-private
@@ -39,20 +52,6 @@
   #{3.0 3.1}
   {0 :C 8 :fast 9 :cold 64 :x86-std 65 :x86-fast})
 
-(def-enum attribute
-  #{3.1}
-  (zipmap (concat (map (partial bit-shift-left 1) (range 16))
-                  [2031616 2097152 4194304 8388608 16777216
-                   33554432 469762048 536870912 1073741824 2147483648])
-          [:z-ext :s-ext :no-return :in-reg :struct-ret
-           :no-unwind :no-alias :by-val :nest :read-none
-           :read-only :no-inline :always-inline
-           :optimize-for-size :stack-protect
-           :stack-protect-req :alignment :no-capture
-           :no-red-zone :no-implicit-float :naked
-           :inline-hint :stack-alignment :returns-twice
-           :uw-table :non-lazy-bind]))
-
 (def-enum int-predicate
   #{3.0 3.1}
   (zipmap (range 32 42) [:eq :ne :ugt :uge :ult
@@ -60,22 +59,26 @@
 
 (def-enum real-predicate
   #{3.0 3.1}
-  [nil :oeq :ogt :oge :olt :ole :one :ord
-   :uno :ueq :ugt :uge :ult :ule :une])
-
-(def-enum atomic-bin-op
-  #{3.1}
-  [:xchg :add :sub :and :nand :or :xor
-   :max :min :umax :umin])
-
-(def-enum atomic-ordering
-  #{3.1}
-  [:no-atomic :unordered :monotonic :consume :acquire
-   :release :acquire-release :sequentially-consistent])
+  [false :oeq :ogt :oge :olt :ole :one :ord
+   :uno :ueq :ugt :uge :ult :ule :une true])
 
 (def-enum bool
   #{3.0 3.1}
   [false true])
+
+(def-enum landing-pad-clause
+  #{3.0 3.1}
+  [:catch :filter])
+
+;; (def-enum atomic-bin-op
+;;   #{3.1}
+;;   [:xchg :add :sub :and :nand :or :xor
+;;    :max :min :umax :umin])
+
+;; (def-enum atomic-ordering
+;;   #{3.1}
+;;   [:no-atomic :unordered :monotonic :consume :acquire
+;;    :release :acquire-release :sequentially-consistent])
 
 (def-pointers
   ModuleRef
