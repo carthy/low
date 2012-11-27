@@ -11,12 +11,15 @@
          (import-function @llvm-lib (str "LLVM" (name f-name)) args ret-type)))
 
 (defmacro def-enum [n & args]
-  (let [enum-versioned (partition 2 args)
-        enum-map (reduce #(reduce (fn [ret k] (assoc ret k (second %2)))
-                                  % (first %2))
-                         {} enum-versioned)]
+  (if (set? (first args))
+    (let [enum-versioned (partition 2 args)
+          enum-map (reduce #(reduce (fn [ret k] (assoc ret k (second %2)))
+                                    % (first %2))
+                           {} enum-versioned)]
+      `(def-enum* ~n
+         ~(or (enum-map @llvm-version) {})))
     `(def-enum* ~n
-       ~(or (enum-map @llvm-version) {}))))
+       ~@args)))
 
 (declare llvm-api)
 
@@ -25,7 +28,7 @@
   (deliver llvm-lib (load-lib (str "LLVM-" ver)))
   (load "llvm/api")
   (doseq [[f-name args ret-type versions] llvm-api]
-    (when (versions ver)
+    (when ((or versions #{ver}) ver)
       (import-llvm-function f-name args ret-type))))
 
 (defn LLVM [f & args]
