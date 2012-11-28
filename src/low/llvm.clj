@@ -22,11 +22,12 @@
        ~@args)))
 
 (declare llvm-api)
+(def ^:private loader (future (load "llvm/api")))
 
 (defn setup-llvm [ver]
   (deliver llvm-version ver)
   (deliver llvm-lib (load-lib (str "LLVM-" ver)))
-  (load "llvm/api")
+  @loader
   (doseq [[f-name args ret-type versions] llvm-api]
     (when ((or versions #{ver}) ver)
       (import-llvm-function f-name args ret-type))))
