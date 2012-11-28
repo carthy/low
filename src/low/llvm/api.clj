@@ -45,7 +45,12 @@
   [:default :hidden :protected])
 
 (def-enum call-conv
-  {0 :C 8 :fast 9 :cold 64 :x86-std 65 :x86-fast})
+  {0 :c 8 :fast 9 :cold 10 :ghc 11 :hipe
+   64 :x86-std 65 :x86-fast 66 :arm-apcs
+   67 :arm-aapcs 68 :arm-aapcs-vfp 69 :msp430-intr
+   70 :x86-this-call 71 :ptx-kernel 72 :ptx-device
+   73 :mblaze-interrupt 74 :mblaze-svol
+   75 :spir-func 76 :spir-func 77 :intel-ocl-bi})
 
 (def-enum int-predicate
   (zipmap (range 32 42) [:eq :ne :ugt :uge :ult
@@ -191,10 +196,15 @@
    [:PassManagerBuilderUseInlinerWithThreshold [PassManagerBuilderRef Integer] Void]
    [:PassManagerBuilderPopulateModulePassManager [PassManagerBuilderRef PassManagerRef] Void]
    [:PassManagerBuilderPopulateFunctionPassManager [PassManagerBuilderRef PassManagerRef] Void]
-      ;; Function
+   ;; Function
    [:GetNextFunction [ValueRef] ValueRef]
    [:GetPreviousFunction [ValueRef] ValueRef]
    [:DeleteFunction [ValueRef] Void]
+   [:IsFunctionVarArg [TypeRef] bool]
+   [:GetReturnType [TypeRef] TypeRef]
+   [:CountParamTypes [TypeRef] Integer]
+   [:GetParamTypes [TypeRef TypeRefPtr] Void]
+   ;; Types
    [:GetTypeKind [TypeRef] type-kind]
    [:GetTypeContext [TypeRef] ContextRef]
    [:Int1TypeInContext [ContextRef] TypeRef]
@@ -217,14 +227,10 @@
    [:PPCFP128TypeInContext [ContextRef] TypeRef]
    [:FloatType [] TypeRef]
    [:DoubleType [] TypeRef]
+   [:FunctionType [TypeRef TypeRefPtr Integer bool] TypeRef]
    [:X86FP80Type [] TypeRef]
    [:FP128Type [] TypeRef]
    [:PPCFP128Type [] TypeRef]
-   [:FunctionType [TypeRef TypeRefPtr Integer bool] TypeRef]
-   [:IsFunctionVarArg [TypeRef] bool]
-   [:GetReturnType [TypeRef] TypeRef]
-   [:CountParamTypes [TypeRef] Integer]
-   [:GetParamTypes [TypeRef TypeRefPtr] Void]
    [:StructTypeInContext [ContextRef TypeRefPtr Integer bool] TypeRef]
    [:StructType [TypeRefPtr Integer bool] TypeRef]
    [:CountStructElementTypes [TypeRef] Integer]
@@ -242,6 +248,7 @@
    [:VoidType [] TypeRef]
    [:LabelType [] TypeRef]
    [:TypeOf [ValueRef] TypeRef]
+   ;; Value
    [:GetValueName [ValueRef] String]
    [:SetValueName [ValueRef String] Void]
    [:DumpValue [ValueRef] Void]
