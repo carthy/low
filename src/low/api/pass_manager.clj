@@ -1,4 +1,5 @@
 (ns low.api.pass-manager
+  (:refer-clojure :exclude [type])
   (:require [clojure.string :as s]
             [low.llvm :refer [LLVM type]]))
 
