@@ -26,7 +26,7 @@
   (if (= (type module-or-function) 'ModuleRef)
     (LLVM :RunPassManager manager module-or-function)
     (LLVM :RunFunctionPassManager manager module-or-function)))
-x
+
 (def valid-passes
   #{:always-inline :argument-promotion :constant-merge :dead-arg-elimination
     :function-attrs :function-inlining :global-dce :global-optimizer

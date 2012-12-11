@@ -1,8 +1,9 @@
 (ns low.jna
-  (:require [low.utils :refer get-keys get-values])
+  (:require [low.utils :refer [get-keys get-values]])
   (:import
    (clojure.lang IDeref IRecord)
-   (com.sun.jna Function NativeLibrary Pointer)))
+   (com.sun.jna Function Native NativeLibrary Pointer)
+   (java.nio ByteBuffer ByteOrder)))
 
 (defmacro def-enum [name coll]
   `(let [coll# ~coll
@@ -83,3 +84,9 @@
 (defn array-type [type seq]
   (map->ReturnExpr {:ret (into-array (map deref seq))
                     :type type}))
+
+(defn malloc [size]
+  (let [buffer (doto (ByteBuffer/allocateDirect size)
+                 (.order ByteOrder/LITTLE_ENDIAN))
+        pointer (Native/getDirectBufferPointer buffer)]
+    {:pointer pointer :buffer buffer}))
