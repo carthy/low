@@ -1,17 +1,8 @@
 (ns low.jna
+  (:require [low.utils :refer get-keys get-values])
   (:import
    (clojure.lang IDeref IRecord)
    (com.sun.jna Function NativeLibrary Pointer)))
-
-(defn get-keys [coll]
-  (if (map? coll)
-    (keys coll)
-    (range (count coll))))
-
-(defn get-values [coll]
-  (if (map? coll)
-    (vals coll)
-    coll))
 
 (defmacro def-enum [name coll]
   `(let [coll# ~coll
@@ -31,14 +22,6 @@
   (cons 'do
         (for [alias aliases]
           `(def-type-alias ~alias Pointer))))
-
-(defn load-lib [lib]
-  (NativeLibrary/getInstance lib))
-
-(defn get-function [lib name]
-  (if (string? lib)
-    (Function/getFunction lib name)
-    (.getFunction ^NativeLibrary lib name)))
 
 (defn get-type [t]
   (if (map? t)
@@ -76,6 +59,14 @@
     (map #((or (when (map? %) (:fn %))
                identity)
            %2) args ret)))
+
+(defn load-lib [lib]
+  (NativeLibrary/getInstance lib))
+
+(defn get-function [lib name]
+  (if (string? lib)
+    (Function/getFunction lib name)
+    (.getFunction ^NativeLibrary lib name)))
 
 (defn import-function [lib name args ret-type]
   (let [f (get-function lib name)

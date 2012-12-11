@@ -1,12 +1,11 @@
 (ns low.api.pass-manager
   (:require [clojure.string :as s]
-            [low.llvm :refer [LLVM]]
-            [low.jna :refer [virtual-type]]))
+            [low.llvm :refer [LLVM type]]))
 
 (defn create
   ([] (LLVM :CreatePassManager))
   ([module]
-     (if (= (virtual-type module) 'ModuleRef)
+     (if (= (type module) 'ModuleRef)
           (LLVM :CreateFunctionPassManagerForModule module)
           (LLVM :CreateFunctionPassManager module))))
 
@@ -24,10 +23,10 @@
   (LLVM :InitializeFunctionPassManager manager))
 
 (defn run [manager module-or-function]
-  (if (= (virtual-type module-or-function) 'ModuleRef)
+  (if (= (type module-or-function) 'ModuleRef)
     (LLVM :RunPassManager manager module-or-function)
     (LLVM :RunFunctionPassManager manager module-or-function)))
-
+x
 (def valid-passes
   #{:always-inline :argument-promotion :constant-merge :dead-arg-elimination
     :function-attrs :function-inlining :global-dce :global-optimizer

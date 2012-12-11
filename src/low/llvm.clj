@@ -1,4 +1,5 @@
 (ns low.llvm
+  (:refer-clojure :exclude [type])
   (:require [low.jna :refer :all :rename {def-enum def-enum*}])
   (:import (com.sun.jna Pointer)))
 
@@ -23,6 +24,8 @@
 
 (declare llvm-api)
 (def ^:private loader (future (load "llvm/api")))
+
+(def type virtual-type)
 
 (defn setup-llvm [ver]
   (deliver llvm-version ver)
