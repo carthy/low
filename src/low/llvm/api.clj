@@ -63,8 +63,10 @@
 (defpointers
   context-ref
   module-ref
+  module-provider-ref
   type-ref
   value-ref
+  pass-manager-ref
 
   value-ref*
   char**)
@@ -101,4 +103,59 @@
    [:GetNamedGlobal [:module-ref :constchar*] :value-ref]
    [:GetFirstGlobal [:module-ref] :value-ref]
    [:GetLastGlobal [:module-ref] :value-ref]
-   [:AddAlias [:module-ref :type-ref :value-ref :constchar*] :value-ref]])
+   [:AddAlias [:module-ref :type-ref :value-ref :constchar*] :value-ref]
+   ;; PassManager
+   [:CreatePassManager [] :pass-manager-ref]
+   [:CreateFunctionPassManagerForModule [:module-ref] :pass-manager-ref]
+   [:CreateFunctionPassManager [:module-provider-ref] :pass-manager-ref]
+   [:FinalizeFunctionPassManager [:pass-manager-ref] :bool]
+   [:DisposePassManager [:pass-manager-ref] :void]
+   [:RunPassManager [:pass-manager-ref :module-ref] :bool]
+   [:RunFunctionPassManager [:pass-manager-ref :value-ref] :bool]
+   ;; Passes
+   [:AddInternalizePass [:pass-manager-ref :unsigned] :void]
+   [:AddAlwaysInlinerPass [:pass-manager-ref] :void]
+   [:AddVerifierPass [:pass-manager-ref] :void]
+   [:AddGlobalOptimizerPass [:pass-manager-ref] :void]
+   [:AddIPSCCPPass [:pass-manager-ref] :void]
+   [:AddDeadArgEliminationPass [:pass-manager-ref] :void]
+   [:AddInstructionCombiningPass [:pass-manager-ref] :void]
+   [:AddCFGSimplificationPass [:pass-manager-ref] :void]
+   [:AddFunctionInliningPass [:pass-manager-ref] :void]
+   [:AddFunctionAttrsPass [:pass-manager-ref] :void]
+   [:AddScalarReplAggregatesPass [:pass-manager-ref] :void]
+   [:AddScalarReplAggregatesPassSSA [:pass-manager-ref] :void]
+   [:AddScalarReplAggregatesPassWithThreshold [:pass-manager-ref :int] :void]
+   [:AddJumpThreadingPass [:pass-manager-ref] :void]
+   [:AddIPConstantPropagationPass [:pass-manager-ref] :void]
+   [:AddConstantPropagationPass [:pass-manager-ref] :void]
+   [:AddReassociatePass [:pass-manager-ref] :void]
+   [:AddLoopRotatePass [:pass-manager-ref] :void]
+   [:AddLICMPass [:pass-manager-ref] :void]
+   [:AddLoopUnswitchPass [:pass-manager-ref] :void]
+   [:AddLoopDeletionPass [:pass-manager-ref] :void]
+   [:AddLoopUnrollPass [:pass-manager-ref] :void]
+   [:AddGVNPass [:pass-manager-ref] :void]
+   [:AddMemCpyOptPass [:pass-manager-ref] :void]
+   [:AddSCCPPass [:pass-manager-ref] :void]
+   [:AddDeadStoreEliminationPass [:pass-manager-ref] :void]
+   [:AddStripDeadPrototypesPass [:pass-manager-ref] :void]
+   [:AddStripSymbolsPass [:pass-manager-ref] :void]
+   [:AddConstantMergePass [:pass-manager-ref] :void]
+   [:AddArgumentPromotionPass [:pass-manager-ref] :void]
+   [:AddTailCallEliminationPass [:pass-manager-ref] :void]
+   [:AddIndVarSimplifyPass [:pass-manager-ref] :void]
+   [:AddAggressiveDCEPass [:pass-manager-ref] :void]
+   [:AddGlobalDCEPass [:pass-manager-ref] :void]
+   [:AddCorrelatedValuePropagationPass [:pass-manager-ref] :void]
+   [:AddPruneEHPass [:pass-manager-ref] :void]
+   [:AddSimplifyLibCallsPass [:pass-manager-ref] :void]
+   [:AddLoopIdiomPass [:pass-manager-ref] :void]
+   [:AddEarlyCSEPass [:pass-manager-ref] :void]
+   [:AddTypeBasedAliasAnalysisPass [:pass-manager-ref] :void]
+   [:AddBasicAliasAnalysisPass [:pass-manager-ref] :void]
+   [:AddPromoteMemoryToRegisterPass [:pass-manager-ref] :void]
+   [:AddDemoteMemoryToRegisterPass [:pass-manager-ref] :void]
+   [:AddLowerExpectIntrinsicPass [:pass-manager-ref] :void]
+   [:AddBBVectorizePass [:pass-manager-ref] :void #{3.1}]
+   [:AddLoopVectorizePass [:pass-manager-ref] :void #{3.2}]])
