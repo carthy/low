@@ -61,12 +61,44 @@
    :uno :ueq :ugt :uge :ult :ule :une true])
 
 (defpointers
-  context-ref)
+  context-ref
+  module-ref
+  type-ref
+  value-ref
+
+  value-ref*
+  char**)
 
 (def ^:private llvm-api
   [;; Context
    [:ContextCreate [] :context-ref]
    [:GetGlobalContext [] :context-ref]
    [:ContextDispose [:context-ref] :void]
-   [:GetMDKindIDInContext [:context-ref :constchar :unsigned] :unsigned]
-   [:GetMDKindID [:constchar :unsigned] :unsigned]])
+   [:GetMDKindIDInContext [:context-ref :constchar* :unsigned] :unsigned]
+   [:GetMDKindID [:constchar* :unsigned] :unsigned]
+   ;; Module
+   [:ModuleCreateWithName [:constchar*] :module-ref]
+   [:ModuleCreateWithNameInContext [:constchar* :context-ref] :module-ref]
+   [:DisposeModule [:module-ref] :void]
+   [:GetDataLayout [:module-ref] :constchar*]
+   [:SetDataLayout [:module-ref :constchar*] :void]
+   [:GetTarget [:module-ref] :constchar*]
+   [:SetTarget [:module-ref :constchar*] :void]
+   [:DumpModule [:module-ref] :void]
+   [:LLVMPrintModuleToFile [:module-ref :constchar* :char**] :bool #{3.2}]
+   [:SetModuleInlineAsm [:module-ref :constchar*] :void]
+   [:GetModuleContext [:module-ref] :context-ref]
+   [:GetTypeByName [:module-ref :constchar*] :type-ref]
+   [:GetNamedMetadataNumOperands [:module-ref :constchar*] :unsigned #{3.2}]
+   [:GetNamedMetadataOperands [:module-ref :constchar* :value-ref*] :void #{3.2}]
+   [:AddNamedMetadataOperands [:module-ref :constchar* :value-ref] :void #{3.2}]
+   [:AddFunction [:module-ref :constchar* :type-ref] :value-ref]
+   [:GetNamedFunction [:module-ref :constchar*] :value-ref]
+   [:GetFirstFunction [:module-ref] :value-ref]
+   [:GetLastFunction [:module-ref] :value-ref]
+   [:AddGlobal [:module-ref :type-ref :constchar*] :value-ref]
+   [:AddGlobalInAddressSpace [:module-ref :type-ref :constchar* :unsigned] :value-ref]
+   [:GetNamedGlobal [:module-ref :constchar*] :value-ref]
+   [:GetFirstGlobal [:module-ref] :value-ref]
+   [:GetLastGlobal [:module-ref] :value-ref]
+   [:AddAlias [:module-ref :type-ref :value-ref :constchar*] :value-ref]])
