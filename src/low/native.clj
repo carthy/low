@@ -134,7 +134,8 @@
 
 (defn adjust [types args]
   (map bind (map #(if (expr? %2)
-                       %2 (->Expr % %2)) types args)))
+                    %2
+                    (->Expr %2 %)) types args)))
 
 (defn matching-types [args r]
   (every? true?
