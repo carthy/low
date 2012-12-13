@@ -1,4 +1,5 @@
 (ns low.api.module
+  (:refer-clojure :exclude [type])
   (:require [low.llvm :refer [LLVM]]))
 
 (defn create
