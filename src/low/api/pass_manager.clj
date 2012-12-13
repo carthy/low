@@ -1,18 +1,18 @@
 (ns low.api.pass-manager
   (:refer-clojure :exclude [type])
   (:require [clojure.string :as s]
-            [low.llvm :refer [LLVM type]]))
+            [low.llvm :refer [LLVM]]))
 
 (defn create
   ([] (LLVM :CreatePassManager))
   ([module]
-     (if (= (type module) 'ModuleRef)
+     (if (= (:type module) :module-ref)
           (LLVM :CreateFunctionPassManagerForModule module)
           (LLVM :CreateFunctionPassManager module))))
 
-(defn destroy! [module]
-  (let [err @(LLVM :FinalizeFunctionPassManager)]
-    (LLVM :DisposeModule module)
+(defn destroy! [manager]
+  (let [err (LLVM :FinalizeFunctionPassManager manager)]
+    (LLVM :DisposePassManager manager)
     err))
 
 (defmacro with-pass-managers [[& ctxs] & body]
@@ -24,7 +24,7 @@
   (LLVM :InitializeFunctionPassManager manager))
 
 (defn run [manager module-or-function]
-  (if (= (type module-or-function) 'ModuleRef)
+  (if (= (:type module-or-function) :module-ref)
     (LLVM :RunPassManager manager module-or-function)
     (LLVM :RunFunctionPassManager manager module-or-function)))
 
