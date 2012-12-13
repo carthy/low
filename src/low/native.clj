@@ -45,7 +45,10 @@
 
 (declare get-type)
 (defmethod print-method Expr [^Expr t ^Writer writer]
-  (.write writer (str "<Expr: " (or (:val t) "nil") " (type: "))
+  (.write writer (str "<Expr: " (or (:val t)
+                                    (if (false? (:val t))
+                                      "false"
+                                      "nil")) " (type: "))
   (print (@type-map (:type t)))
   (.write writer ")>"))
 
