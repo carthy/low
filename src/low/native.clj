@@ -45,8 +45,8 @@
 
 (declare get-type)
 (defmethod print-method Expr [^Expr t ^Writer writer]
-  (.write writer (str "<Expr: " (:val t) " (type: "))
-  (print (get-type (:type t)))
+  (.write writer (str "<Expr: " (or (:val t) "nil") " (type: "))
+  (print (@type-map (:type t)))
   (.write writer ")>"))
 
 (defmacro typedef [name type & [ret-f bind-f]]
@@ -63,7 +63,7 @@
          return-f# #(coll# %)]
      (typedef ~name :int return-f# bind-f#)))
 
-(defmacro def-pointers [& types]
+(defmacro defpointers [& types]
   (cons 'do
         (for [type types]
           `(typedef ~type Pointer))))
@@ -114,12 +114,13 @@
   :double* (->Type :double* DoubleBuffer identity identity)})
 
 (defn get-type [t]
-  (or (@type-map t)
-      (if (type? t)
-        (@type-map (:type t))
-        (if (class? t)
-          t
-          (class t)))))
+  (let [t (if (expr? t) (:type t) t)]
+   (or (:type (@type-map t))
+       (if (type? t)
+         (get-type (:type t))
+         (if (class? t)
+           t
+           (class t))))))
 
 (defn get-type* [t]
   (let [t (get-type t)]
