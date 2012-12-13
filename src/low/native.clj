@@ -80,6 +80,7 @@
   :byte (->Type :byte Byte/TYPE identity byte)
   :short (->Type :short Short/TYPE identity short)
   :int (->Type :int Integer/TYPE identity int)
+  :unsigned (->Type :unsigned (first native-long) identity (second native-long))
   ;; :bool (->Type :bool Boolean/TYPE identity #(if (true? %) 1 0))
   :bool (->Type :bool Boolean/TYPE identity identity)
   :size_t (->Type :size_t (first native-long) identity (second native-long))
