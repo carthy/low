@@ -1,7 +1,6 @@
 (ns low.llvm
   (:refer-clojure :exclude [type])
-  (:require [low.jna :refer :all :rename {def-enum def-enum*}])
-  (:import (com.sun.jna Pointer)))
+  (:require [low.native :refer :all :rename {defenum defenum*}]))
 
 (defonce ^:private llvm-function-map (atom {}))
 (defonce ^:private llvm-lib (promise))
@@ -11,21 +10,19 @@
   (swap! llvm-function-map assoc f-name
          (import-function @llvm-lib (str "LLVM" (name f-name)) args ret-type)))
 
-(defmacro def-enum [n & args]
+(defmacro defenum [n & args]
   (if (set? (first args))
     (let [enum-versioned (partition 2 args)
           enum-map (reduce #(reduce (fn [ret k] (assoc ret k (second %2)))
                                     % (first %2))
                            {} enum-versioned)]
-      `(def-enum* ~n
+      `(defenum* ~n
          ~(or (enum-map @llvm-version) {})))
-    `(def-enum* ~n
+    `(defenum* ~n
        ~@args)))
 
 (declare llvm-api)
 (def ^:private loader (future (load "llvm/api")))
-
-(def type virtual-type)
 
 (defn setup-llvm [ver]
   (deliver llvm-version ver)
