@@ -117,7 +117,9 @@
   (or (@type-map t)
       (if (type? t)
         (@type-map (:type t))
-        t)))
+        (if (class? t)
+          t
+          (class t)))))
 
 (defn get-type* [t]
   (let [t (get-type t)]
