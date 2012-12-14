@@ -15,9 +15,9 @@
    :label :integer :function :struct :array
    :pointer :opaque :vector :metadata :X86_MMX]
   #{3.1}
-  [:void :half :float :double :X86_FP80 :FP128
-   :PPC_FP128 :label :integer :function :struct
-   :array :pointer :vector :metadata :X86_MMX])
+  [:void :half :float :double :X86-FP80 :FP128
+   :PPC-FP128 :label :integer :function :struct
+   :array :pointer :vector :metadata :X86-MMX])
 
 ;; we don't support :unwind either for 3.0
 (defenum opcode
@@ -116,7 +116,31 @@
    [:GetPrevGlobal [:value-ref] :value-ref]
    [:AddAlias [:module-ref :type-ref :value-ref :constchar*] :value-ref]
    [:VerifyModule [:module-ref :verifier-failure-action]]
-   ;; PassManager
+   ;; Types
+   [:IntType [:unsigned] :type-ref]
+   [:Int1Type [] :type-ref]
+   [:Int8Type [] :type-ref]
+   [:Int16Type [] :type-ref]
+   [:Int32Type [] :type-ref]
+   [:Int64Type [] :type-ref]
+   [:IntTypeInContext [:context-ref :unsigned] :type-ref]
+   [:Int1TypeInContext [:context-ref] :type-ref]
+   [:Int8TypeInContext [:context-ref] :type-ref]
+   [:Int16TypeInContext [:context-ref] :type-ref]
+   [:Int32TypeInContext [:context-ref] :type-ref]
+   [:Int64TypeInContext [:context-ref] :type-ref]
+   [:GetIntTypeWidth [:type-ref] :unsigned]
+   [:FloatType [] :type-ref]
+   [:DoubleType [] :type-ref]
+   [:X86FP80Type [] :type-ref]
+   [:FP128Type [] :type-ref]
+   [:PPCFP128Type [] :type-ref]
+   [:FloatTypeInContext [:context-ref] :type-ref]
+   [:DoubleTypeInContext [:context-ref] :type-ref]
+   [:X86FP80TypeInContext [:context-ref] :type-ref]
+   [:FP128TypeInContext [:context-ref] :type-ref]
+   [:PPCFP128TypeInContext [:context-ref] :type-ref]
+    ;; PassManager
    [:CreatePassManager [] :pass-manager-ref]
    [:CreateFunctionPassManagerForModule [:module-ref] :pass-manager-ref]
    [:CreateFunctionPassManager [:module-provider-ref] :pass-manager-ref]
