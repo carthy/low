@@ -176,11 +176,11 @@
    [:RunStaticConstructors [:execution-engine-ref] :void]
    [:RunStaticDestructors [:execution-engine-ref] :void]
    ;;GenericValue
-   [:CreateGenericValueOfInt [:type-ref :unsigned :bool] :generic-value-ref]
+   [:CreateGenericValueOfInt [:type-ref :longlong :bool] :generic-value-ref]
    [:CreateGenericValueOfPointer [:void*] :generic-value-ref]
    [:CreateGenericValueOfFloat [:type-ref :double] :generic-value-ref]
-   [:GenericValueIntWidth [:gneric-value-ref] :unsigned]
-   [:GenericValueToInt [:generic-value-ref] :longlong] ;; :unsigned-longlong
-   [:GenericValueToPointer [:gneric-value-ref] :void*]
+   [:GenericValueIntWidth [:generic-value-ref] :unsigned]
+   [:GenericValueToInt [:generic-value-ref :bool] :longlong] ;; :unsigned-longlong
+   [:GenericValueToPointer [:generic-value-ref] :void*]
    [:GenericValueToFloat [:type-ref :generic-value-ref] :double]
    [:DisposeGenericValue [:generic-value-ref] :void]])
