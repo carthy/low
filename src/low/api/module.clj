@@ -1,6 +1,7 @@
 (ns low.api.module
   (:refer-clojure :exclude [type])
-  (:require [low.llvm :refer [LLVM]]))
+  (:require [low.llvm :refer [LLVM llvm-version]]
+            [low.native :refer [pointer & to-str]]))
 
 (defn create
   ([^String name]
@@ -16,17 +17,23 @@
      (try ~@body
           (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))
 
+(defn target [module]
+  (LLVM :GetTarget module))
+
+(defn target! [module triple]
+  (LLVM :SetTarget module triple))
+
 (defn data-layout [module]
   (LLVM :GetDataLayout module))
 
 (defn data-layout! [module triple]
   (LLVM :SetDataLayout module triple))
 
-(defn target [module]
-  (LLVM :GetTarget module))
-
-(defn target! [module triple]
-  (LLVM :SetTarget module triple))
+(defn link [module module-to-link preserv?]
+  {:pre [(>= @llvm-version 3.2)]
+   (let [out (pointer :char*)]
+     (assoc (LLVM :LinkModules module module-to-link preserv? out)
+       :out out))})
 
 (defn dump! [module]
   (LLVM :DumpModule module))
@@ -40,6 +47,16 @@
 (defn type [module name]
   (LLVM :GetTypeByName module name))
 
+(defn add-alias [module type value name]
+  (LLVM :AddAlias module type value name))
+
+(defn verify [module failure-action]
+  (let [err (pointer :char*)]
+    (assoc (LLVM :VerifyModule module failure-action err)
+      :err (& err))))
+
+;;TODO: functions
+;; functions
 (defn add-function [module name function]
   (LLVM :AddFunction module name function))
 
@@ -52,6 +69,14 @@
 (defn last-function [module]
   (LLVM :GetLastFunction module))
 
+(defn next-function [module]
+  (LLVM :GetNextFunction module))
+
+(defn prev-function [module]
+  (LLVM :GetPrevFunction module))
+
+;; TODO: global-variables
+;; global variables
 (defn add-global
   ([module type name]
      (LLVM :AddGlobal module type name))
@@ -67,5 +92,8 @@
 (defn last-global [module]
   (LLVM :GetLastGlobal module))
 
-(defn add-alias [module type value name]
-  (LLVM :AddAlias module type value name))
+(defn next-global [module]
+  (LLVM :GetNextGlobal module))
+
+(defn prev-global [module]
+  (LLVM :GetPrevGlobal module))
