@@ -13,10 +13,10 @@
 (defn destroy! [context]
   (LLVM :ContextDispose context))
 
-(defmacro with-contexts [[& ctxs] & body]
-  `(let [~@(mapcat #(list % `(create)) ctxs)]
+(defmacro with-destroy [[& ctxs] & body]
+  `(let [~@ctxs]
      (try ~@body
-          (finally ~@(map #(list `destroy! %) ctxs)))))
+          (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))
 
 (defn metadata-kind-id
   ([string]

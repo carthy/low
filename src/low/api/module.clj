@@ -11,10 +11,10 @@
 (defn destroy! [module]
   (LLVM :DisposeModule module))
 
-(defmacro with-modules [[& ctxs] & body]
-  `(let [~@(mapcat #(list % `(create)) ctxs)]
+(defmacro with-destroy [[& ctxs] & body]
+  `(let [~@ctxs]
      (try ~@body
-          (finally ~@(map #(list `destroy! %) ctxs)))))
+          (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))
 
 (defn data-layout [module]
   (LLVM :GetDataLayout module))
