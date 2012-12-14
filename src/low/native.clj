@@ -35,7 +35,7 @@
 (defprotocol IBind
   (bind [val]))
 
-(defrecord Expr [val type]
+(defrecord Expr [val type #_err #_out]
   IDeref
   (deref [this] val)
   IBind
@@ -178,6 +178,9 @@
   (let [t-name (name (:type ptr))]
    (->Expr (.getPointer @ptr 0)
            (keyword (.substring t-name 0 (dec (.length t-name)))))))
+
+(defn to-str [ptr]
+  (.toString ptr 0))
 
 (defn array-of [type seq]
   (map->Expr {:ret (into-array (map bind seq))
