@@ -6,9 +6,10 @@
 (defn create
   ([] (LLVM :CreatePassManager))
   ([module]
-     (if (= (:type module) :module-ref)
-          (LLVM :CreateFunctionPassManagerForModule module)
-          (LLVM :CreateFunctionPassManager module))))
+     (LLVM (if (= (:type module) :module-ref)
+             :CreateFunctionPassManagerForModule
+             :CreateFunctionPassManager)
+           module)))
 
 (defn destroy! [manager]
   (let [err (LLVM :FinalizeFunctionPassManager manager)]
@@ -24,9 +25,10 @@
   (LLVM :InitializeFunctionPassManager manager))
 
 (defn run [manager module-or-function]
-  (if (= (:type module-or-function) :module-ref)
-    (LLVM :RunPassManager manager module-or-function)
-    (LLVM :RunFunctionPassManager manager module-or-function)))
+  (LLVM (if (= (:type module-or-function) :module-ref)
+          :RunPassManager
+          :RunFunctionPassManager)
+        manager module-or-function))
 
 (def valid-passes
   #{:always-inline :argument-promotion :constant-merge :dead-arg-elimination
