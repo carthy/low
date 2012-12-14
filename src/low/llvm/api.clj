@@ -160,7 +160,7 @@
    [:AddPromoteMemoryToRegisterPass [:pass-manager-ref] :void]
    [:AddDemoteMemoryToRegisterPass [:pass-manager-ref] :void]
    [:AddLowerExpectIntrinsicPass [:pass-manager-ref] :void]
-   [:AddBBVectorizePass [:pass-manager-ref] :void #{3.1}]
+   [:AddBBVectorizePass [:pass-manager-ref] :void #{3.1 3.2}]
    [:AddLoopVectorizePass [:pass-manager-ref] :void #{3.2}]
    ;;ExecutionEngine
    [:LinkInJIT [] :void]
