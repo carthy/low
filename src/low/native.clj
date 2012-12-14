@@ -85,7 +85,7 @@
   :int (->Type :int Integer/TYPE identity int)
   :unsigned (->Type :unsigned (first native-long) identity (second native-long))
   ;; :bool (->Type :bool Boolean/TYPE identity #(if (true? %) 1 0))
-  :bool (->Type :bool Boolean/TYPE identity identity)
+  :bool (->Type :bool Boolean/TYPE identity boolean)
   :size_t (->Type :size_t (first native-long) identity (second native-long))
   :long (->Type :long (first native-long) identity (second native-long))
   :longlong (->Type :longlong Long/TYPE identity long)
@@ -129,7 +129,7 @@
 (defn get-type* [t]
   (let [t (get-type t)]
     (if (#{Byte/TYPE Boolean/TYPE Character/TYPE Short/TYPE
-           Integer/TYPE Long/TYPE Float/TYPE Double/TYPE} t)
+           Integer/TYPE Long/TYPE Float/TYPE Double/TYPE Boolean} t)
       Number
       (if (#{Memory Pointer} t)
         Pointer
