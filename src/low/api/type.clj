@@ -1,70 +1,54 @@
 (ns low.api.type
-  (:refer-clojure :exclude [int float double])
   (:require [low.llvm :refer [LLVM llvm-version]]
             [low.native :refer [pointer & to-str]]))
 
 ;; integer
-(defn int
+(def ^:private integer-types
+  {:bool 1
+   :byte 8
+   :short 16
+   :int 32
+   :long 64})
+
+(defn integer
   ([] (LLVM :Int32Type))
   ([bits-or-context]
      (if (number? bits-or-context)
-       (if (#{1 8 16 32} bits)
+       (if (#{1 8 16 32 64} bits)
          (LLVM (keyword "Int" bits "Type"))
          (LLVM :IntType bits))
-       (LLVM :Int32TypeInContext bits-or-context)))
+       (if (keyword? bits-or-context)
+         (let [n (integer-types bits-or-context)]
+           (assert n)
+           (integer n))
+         (LLVM :Int32TypeInContext bits-or-context))))
   ([context bits]
-     (if (#{1 8 16 32} bits)
-       (LLVM (keyword "Int" bits "TypeInContext" context))
-       (LLVM :IntType context bits))))
+     (if (number? bits)
+       (if (#{1 8 16 32 64} bits)
+         (LLVM (keyword "Int" bits "TypeInContext" context))
+         (LLVM :IntType context bits))
+       (let [n (integer-types bits)]
+         (assert n)
+         (integer context n)))))
 
 (defn width [int-type]
   (LLVM :GetIntTypeWidth int-type))
 
 ;; floating point
-(defn half
-  ([]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :HalfType))
-  ([context]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :HalfTypeInContext context)))
+(def ^:private floating-types
+  {:half "Half"
+   :float "Float"
+   :double "Double"
+   :X86-FP80 "X86FP80"
+   :FP128 "FP128"
+   :PPC-FP128 "PPCFP128"})
 
-(defn float
-  ([]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :FloatType))
-  ([context]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :FloatTypeInContext context)))
-
-(defn double
-  ([]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :DoubleType))
-  ([context]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :DoubleTypeInContext context)))
-
-(defn X86-FP80
-  ([]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :X86FP80Type))
-  ([context]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :X86FP80TypeInContext context)))
-
-(defn FP128
-  ([]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :FP128Type))
-  ([context]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :FP128TypeInContext context)))
-
-(defn PPC-FP128
-  ([]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :PPCFP128Type))
-  ([context]
-     {:pre [(>= @llvm-version 3.1)]}
-     (LLVM :PPCFP128TypeInContext context)))
+(defn floating
+  ([type]
+     {:pre [(floating-types type)
+            (if (= :half type) (>= @llvm-version 3.1) true)]}
+     (LLVM (keyword (str (floating-types type) "Type"))))
+  ([context type]
+     {:pre [(floating-types type)
+            (if (= :half type) (>= @llvm-version 3.1) true)]}
+     (LLVM (keyword (str (floating-types type) "TypeInContext")) context)))
