@@ -70,7 +70,6 @@
   execution-engine-ref
   generic-value-ref
 
-  ;; Those are probably not necessary
   execution-engine-ref*
   value-ref*
   char**)

@@ -137,14 +137,17 @@
         t))))
 
 (defn adjust [types args]
-  (map bind (map #(if (expr? %2)
-                    %2
-                    (->Expr %2 %)) types args)))
+  (map #(if (expr? %2)
+          %2
+          (if (= (get-type* %)
+                 (get-type* %2))
+            (->Expr %2 %)))
+       types args))
 
 (defn matching-types [args r]
-  (every? true?
-          (map = (map get-type* args)
-                 (map get-type* r))))
+  (and (= (count args)
+          (count r))
+       (every? true? (map = args (map :type r)))))
 
 (defn import-function [lib name args ret-type]
   (let [f (get-function lib name)
@@ -152,13 +155,14 @@
         fun (when (type? ret-type)
               (:ret-f ret-type))]
     (fn [& r]
-      (assert (matching-types args r))
-      (map->Expr
-       {:val ((or fun identity)
-              (if (= Void/TYPE ret-class)
-                (.invoke f (to-array (adjust args r)))
-                (.invoke f ret-class (to-array (adjust args r)))))
-        :type ret-type}))))
+      (let [r (adjust args r)]
+        (assert (matching-types args r))
+        (map->Expr
+         {:val ((or fun identity)
+                (if (= Void/TYPE ret-class)
+                  (.invoke f (to-array (map bind r)))
+                 (.invoke f ret-class (to-array (map bind r)))))
+          :type ret-type})))))
 
 ;; (defn array-type [type seq]
 ;;   (map->Expr {:ret (into-array (map deref seq))
