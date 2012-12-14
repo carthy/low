@@ -164,10 +164,6 @@
                  (.invoke f ret-class (to-array (map bind r)))))
           :type ret-type})))))
 
-;; (defn array-type [type seq]
-;;   (map->Expr {:ret (into-array (map deref seq))
-;;               :type type}))
-
 ;; (defn malloc [size]
 ;;   (let [buffer (doto (ByteBuffer/allocateDirect size)
 ;;                  (.order ByteOrder/LITTLE_ENDIAN))
@@ -182,3 +178,7 @@
   (let [t-name (name (:type ptr))]
    (->Expr (.getPointer @ptr 0)
            (keyword (.substring t-name 0 (dec (.length t-name)))))))
+
+(defn array-of [type seq]
+  (map->Expr {:ret (into-array (map bind seq))
+              :type (keyword (str (name type) "*"))}))
