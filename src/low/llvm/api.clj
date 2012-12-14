@@ -67,7 +67,11 @@
   type-ref
   value-ref
   pass-manager-ref
+  execution-engine-ref
+  generic-value-ref
 
+  ;; Those are probably not necessary
+  execution-engine-ref*
   value-ref*
   char**)
 
@@ -158,4 +162,25 @@
    [:AddDemoteMemoryToRegisterPass [:pass-manager-ref] :void]
    [:AddLowerExpectIntrinsicPass [:pass-manager-ref] :void]
    [:AddBBVectorizePass [:pass-manager-ref] :void #{3.1}]
-   [:AddLoopVectorizePass [:pass-manager-ref] :void #{3.2}]])
+   [:AddLoopVectorizePass [:pass-manager-ref] :void #{3.2}]
+   ;;ExecutionEngine
+   [:LinkInJIT [] :void]
+   [:LinkInInterpreter [] :void]
+   [:CreateExecutionEngine [:execution-engine-ref* :module-provider-ref :char**] :bool]
+   [:CreateExecutionEngineForModule [:execution-engine-ref* :module-ref :char**] :bool]
+   [:CreateInterpreter [:execution-engine-ref* :module-provider-ref :char**] :bool]
+   [:CreateInterpreterForModule [:execution-engine-ref* :module-ref :char**] :bool]
+   [:CreateJITCompiler [:execution-engine-ref* :module-provider-ref :unsigned :char**] :bool]
+   [:CreateJITCompilerForModule [:execution-engine-ref* :module-ref :unsigned :char**] :bool]
+   [:DisposeExecutionEngine [:execution-engine-ref] :void]
+   [:RunStaticConstructors [:execution-engine-ref] :void]
+   [:RunStaticDestructors [:execution-engine-ref] :void]
+   ;;GenericValue
+   [:CreateGenericValueOfInt [:type-ref :unsigned :bool] :generic-value-ref]
+   [:CreateGenericValueOfPointer [:void*] :generic-value-ref]
+   [:CreateGenericValueOfFloat [:type-ref :double] :generic-value-ref]
+   [:GenericValueIntWidth [:gneric-value-ref] :unsigned]
+   [:GenericValueToInt [:generic-value-ref] :longlong] ;; :unsigned-longlong
+   [:GenericValueToPointer [:gneric-value-ref] :void*]
+   [:GenericValueToFloat [:type-ref :generic-value-ref] :double]
+   [:DisposeGenericValue [:generic-value-ref] :void]])
