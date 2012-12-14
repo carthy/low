@@ -60,6 +60,9 @@
   [false :oeq :ogt :oge :olt :ole :one :ord
    :uno :ueq :ugt :uge :ult :ule :une true])
 
+(defenum verifier-failure-action
+  [:abort-process :print-message :return-status])
+
 (defpointers
   context-ref
   module-ref
@@ -89,6 +92,7 @@
    [:SetDataLayout [:module-ref :constchar*] :void]
    [:GetTarget [:module-ref] :constchar*]
    [:SetTarget [:module-ref :constchar*] :void]
+   [:LinkModules [:module-ref :module-ref :bool :char**] :bool #{3.2}]
    [:DumpModule [:module-ref] :void]
    [:LLVMPrintModuleToFile [:module-ref :constchar* :char**] :bool #{3.2}]
    [:SetModuleInlineAsm [:module-ref :constchar*] :void]
@@ -101,12 +105,17 @@
    [:GetNamedFunction [:module-ref :constchar*] :value-ref]
    [:GetFirstFunction [:module-ref] :value-ref]
    [:GetLastFunction [:module-ref] :value-ref]
+   [:GetNextFunction [:module-ref] :value-ref]
+   [:GetPrevFunction [:module-ref] :value-ref]
    [:AddGlobal [:module-ref :type-ref :constchar*] :value-ref]
    [:AddGlobalInAddressSpace [:module-ref :type-ref :constchar* :unsigned] :value-ref]
    [:GetNamedGlobal [:module-ref :constchar*] :value-ref]
    [:GetFirstGlobal [:module-ref] :value-ref]
    [:GetLastGlobal [:module-ref] :value-ref]
+   [:GetNextGlobal [:value-ref] :value-ref]
+   [:GetPrevGlobal [:value-ref] :value-ref]
    [:AddAlias [:module-ref :type-ref :value-ref :constchar*] :value-ref]
+   [:VerifyModule [:module-ref :verifier-failure-action]]
    ;; PassManager
    [:CreatePassManager [] :pass-manager-ref]
    [:CreateFunctionPassManagerForModule [:module-ref] :pass-manager-ref]
@@ -179,7 +188,7 @@
    [:CreateGenericValueOfPointer [:void*] :generic-value-ref]
    [:CreateGenericValueOfFloat [:type-ref :double] :generic-value-ref]
    [:GenericValueIntWidth [:generic-value-ref] :unsigned]
-   [:GenericValueToInt [:generic-value-ref :bool] :longlong] ;; :unsigned-longlong
+   [:GenericValueToInt [:generic-value-ref :bool] :longlong]
    [:GenericValueToPointer [:generic-value-ref] :void*]
    [:GenericValueToFloat [:type-ref :generic-value-ref] :double]
    [:DisposeGenericValue [:generic-value-ref] :void]])
