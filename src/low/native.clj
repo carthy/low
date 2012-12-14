@@ -129,7 +129,8 @@
 (defn get-type* [t]
   (let [t (get-type t)]
     (if (#{Byte/TYPE Boolean/TYPE Character/TYPE Short/TYPE
-           Integer/TYPE Long/TYPE Float/TYPE Double/TYPE Boolean} t)
+           Integer/TYPE Long/TYPE Float/TYPE Double/TYPE
+           Byte Boolean Character Short Integer Long Float Double} t)
       Number
       (if (#{Memory Pointer} t)
         Pointer
