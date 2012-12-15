@@ -1,7 +1,8 @@
 (ns low.api.type
-  (:refer-clojure :exclude [type])
+  (:refer-clojure :exclude [type struct])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [array-of pointer to-ptr-vec & type-map]]))
+            [low.native :refer [array-of pointer to-ptr-vec & type-map]]
+            [low.api.context :refer [context]]))
 
 (defn type [t]
   (LLVM :GetTypeKind t))
@@ -79,3 +80,51 @@
 
 (defn var-arg? [function]
   (LLVM :IsFunctionVarArg function))
+
+;; struct
+(declare opaque-struct struct-body!)
+
+(defn struct
+  ([name element-types packed?]
+     (create-struct (context) name element-types packed?))
+  ([context name element-types packed?]
+     (doto (opaque-struct context name)
+       (struct-body! element-types packed?))))
+
+(defn opaque-struct
+  ([name]
+     (opaque-struct (context) name))
+  ([context name]
+     (LLVM :StructCreateNamed context name)))
+
+(defn struct-body! [struct element-types packed?]
+  (LLVM :StructSetBody struct
+        (array-of :type element-types)
+        (count element-types) packed?))
+
+(defn literal-struct
+  ([element-types packed?]
+     (LLVM :StructType (array-of :type element-types)
+           (count element-types) packed?))
+  ([context element-types packed?]
+     (LLVM :StructTypeInContext context
+           (array-of :type element-types)
+           (count element-types) packed?)))
+
+(defn struct-name [t]
+  (LLVM :GetStructName t))
+
+(defn packed? [struct]
+  (LLVM :IsPackedStruct struct))
+
+(defn opaque? [struct]
+  (LLVM :IsOpaqueStruct struct))
+
+(defn element-count [struct]
+  (LLVM :CountStructElementTypes struct))
+
+(defn element-types [struct]
+  (let [element-c @(element-count struct)
+        ret (pointer :type element-c)]
+    (LLVM :GetStructElementTypes struct ret)
+    (mapv type (to-ptr-vec ret element-c))))

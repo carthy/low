@@ -151,6 +151,13 @@
    [:GetTypeKind [:type] :type-kind]
    [:StructType [:type* :unsigned :bool] :type]
    [:StructTypeInContext [:context :type* :unsigned :bool] :type]
+   [:StructCreateNamed [:context :char*] :type]
+   [:GetStructName [:type] :constchar*]
+   [:StructSetBody [:type :type* :unsigned :bool] :void]
+   [:CountStructElementTypes [:type] :unsigned]
+   [:GetStructElementTypes [:type :type*] :void]
+   [:IsPackedStruct [:type] :bool]
+   [:IsOpaqueStruct [:type] :bool]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
