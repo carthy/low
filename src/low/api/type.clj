@@ -62,9 +62,10 @@
   (LLVM :CountParamTypes function))
 
 (defn arg-types [function]
-  (let [ret (pointer :type-ref)]
+  (let [args-c @(arg-count function)
+        ret (pointer :type-ref args-c)]
     (LLVM :GetParamTypes function ret)
-    (to-ptr-vec ret @(arg-count function))))
+    (to-ptr-vec ret args-c)))
 
 (defn return-type [function]
   (LLVM :GetReturnType function))
