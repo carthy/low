@@ -6,7 +6,7 @@
 (defn create
   ([] (LLVM :CreatePassManager))
   ([module]
-     (LLVM (if (= (:type module) :module-ref)
+     (LLVM (if (= (:type module) :module)
              :CreateFunctionPassManagerForModule
              :CreateFunctionPassManager)
            module)))
@@ -25,7 +25,7 @@
   (LLVM :InitializeFunctionPassManager manager))
 
 (defn run [manager module-or-function]
-  (LLVM (if (= (:type module-or-function) :module-ref)
+  (LLVM (if (= (:type module-or-function) :module)
           :RunPassManager
           :RunFunctionPassManager)
         manager module-or-function))
