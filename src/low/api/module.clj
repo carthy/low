@@ -72,7 +72,7 @@
   (LLVM :GetNextFunction module))
 
 (defn prev-function [module]
-  (LLVM :GetPrevFunction module))
+  (LLVM :GetPreviousFunction module))
 
 (defn functions [module]
   (lazy-seq (cons (first-function module)
@@ -99,7 +99,7 @@
   (LLVM :GetNextGlobal module))
 
 (defn prev-global [module]
-  (LLVM :GetPrevGlobal module))
+  (LLVM :GetPreviousGlobal module))
 
 (defn globals [module]
   (lazy-seq (cons (first-global module)

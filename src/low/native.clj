@@ -182,7 +182,7 @@
 (defn to-str [ptr]
   (.toString ptr 0))
 
-(def to-ptr-vec [ptr]
+(defn to-ptr-vec [ptr]
   (vec (.toPointerArray ptr 0)))
 
 (defn array-of [type seq]

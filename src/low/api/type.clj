@@ -14,9 +14,9 @@
   ([] (LLVM :Int32Type))
   ([bits-or-context]
      (if (number? bits-or-context)
-       (if (#{1 8 16 32 64} bits)
-         (LLVM (keyword "Int" bits "Type"))
-         (LLVM :IntType bits))
+       (if (#{1 8 16 32 64} bits-or-context)
+         (LLVM (keyword "Int" bits-or-context "Type"))
+         (LLVM :IntType bits-or-context))
        (if (keyword? bits-or-context)
          (let [n (integer-types bits-or-context)]
            (assert n)
@@ -56,7 +56,7 @@
 ;; function
 (defn function [return-type arg-types var-arg?]
   (let [arg-count (count arg-types)]
-    (LLVM :FunctionType return-type (array-of :type-ref arg-types) var-arg?)))
+    (LLVM :FunctionType return-type (array-of :type-ref arg-types) arg-count var-arg?)))
 
 (defn arg-count [function]
   (LLVM :CountParamTypes function))
