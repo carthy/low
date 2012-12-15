@@ -70,7 +70,7 @@
   (LLVM :GetReturnType function))
 
 (defn var-arg? [function]
-  (LLVM :FunctionVarArg function))
+  (LLVM :IsFunctionVarArg function))
 
 (defn type? [t]
   (LLVM :GetTypeKind t))
