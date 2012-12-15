@@ -100,3 +100,8 @@
 
 (defn prev-global [module]
   (LLVM :GetPrevGlobal module))
+
+(defn globals [module]
+  (lazy-seq (cons (first-global module)
+                  (take-while #(not= (last-global module))
+                              (repeatedly #(next-global module))))))
