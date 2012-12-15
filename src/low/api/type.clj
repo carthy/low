@@ -15,7 +15,7 @@
   ([bits-or-context]
      (if (number? bits-or-context)
        (if (#{1 8 16 32 64} bits-or-context)
-         (LLVM (keyword "Int" bits-or-context "Type"))
+         (LLVM (keyword (str "Int" bits-or-context "Type")))
          (LLVM :IntType bits-or-context))
        (if (keyword? bits-or-context)
          (let [n (integer-types bits-or-context)]
@@ -25,7 +25,7 @@
   ([context bits]
      (if (number? bits)
        (if (#{1 8 16 32 64} bits)
-         (LLVM (keyword "Int" bits "TypeInContext" context))
+         (LLVM (keyword (str "Int" bits "TypeInContext") context))
          (LLVM :IntType context bits))
        (let [n (integer-types bits)]
          (assert n)
