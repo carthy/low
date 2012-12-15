@@ -182,6 +182,9 @@
 (defn to-str [ptr]
   (.toString ptr 0))
 
+(def to-ptr-vec [ptr]
+  (vec (.toPointerArray ptr 0)))
+
 (defn array-of [type seq]
   (map->Expr {:ret (into-array (map bind seq))
               :type (keyword (str (name type) "*"))}))
