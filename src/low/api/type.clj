@@ -1,6 +1,6 @@
 (ns low.api.type
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [array-of pointer to-ptr-vec]]))
+            [low.native :refer [array-of pointer to-ptr-vec & type-map]]))
 
 ;; integer
 (def ^:private integer-types
@@ -64,10 +64,13 @@
 (defn arg-types [function]
   (let [ret (pointer :type-ref)]
     (LLVM :GetParamTypes function ret)
-    (to-ptr-vec ret)))
+    (to-ptr-vec (& ret) @(arg-count function))))
 
 (defn return-type [function]
   (LLVM :GetReturnType function))
 
 (defn var-arg? [function]
   (LLVM :FunctionVarArg function))
+
+(defn type? [t]
+  (LLVM :GetTypeKind t))

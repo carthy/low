@@ -146,6 +146,7 @@
    [:GetParamTypes [:type-ref :type-ref*] :void]
    [:GetReturnType [:type-ref] :type-ref]
    [:IsFunctionVarArg [:type-ref] :bool]
+   [:GetTypeKind [:type-ref] :type-kind]
    ;; PassManager
    [:CreatePassManager [] :pass-manager-ref]
    [:CreateFunctionPassManagerForModule [:module-ref] :pass-manager-ref]
