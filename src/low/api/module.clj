@@ -55,7 +55,6 @@
     (assoc (LLVM :VerifyModule module failure-action err)
       :err (& err))))
 
-;;TODO: functions
 ;; functions
 (defn add-function [module name function]
   (LLVM :AddFunction module name function))
@@ -75,7 +74,11 @@
 (defn prev-function [module]
   (LLVM :GetPrevFunction module))
 
-;; TODO: global-variables
+(defn functions [module]
+  (lazy-seq (cons (first-function module)
+                  (take-while #(not= (last-function module))
+                              (repeatedly #(next-function module))))))
+
 ;; global variables
 (defn add-global
   ([module type name]
