@@ -1,6 +1,10 @@
 (ns low.api.type
+  (:refer-clojure :exclude [type])
   (:require [low.llvm :refer [LLVM llvm-version]]
             [low.native :refer [array-of pointer to-ptr-vec & type-map]]))
+
+(defn type [t]
+  (LLVM :GetTypeKind t))
 
 ;; integer
 (def ^:private integer-types
@@ -72,6 +76,3 @@
 
 (defn var-arg? [function]
   (LLVM :IsFunctionVarArg function))
-
-(defn type? [t]
-  (LLVM :GetTypeKind t))
