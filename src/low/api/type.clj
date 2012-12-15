@@ -73,10 +73,10 @@
   (let [args-c @(arg-count function)
         ret (pointer :type args-c)]
     (LLVM :GetParamTypes function ret)
-    (mapv type (to-ptr-vec ret args-c))))
+    (to-ptr-vec ret args-c)))
 
 (defn return-type [function]
-  (type (LLVM :GetReturnType function)))
+  (LLVM :GetReturnType function))
 
 (defn var-arg? [function]
   (LLVM :IsFunctionVarArg function))
@@ -127,4 +127,4 @@
   (let [element-c @(element-count struct)
         ret (pointer :type element-c)]
     (LLVM :GetStructElementTypes struct ret)
-    (mapv type (to-ptr-vec ret element-c))))
+    (to-ptr-vec ret element-c)))
