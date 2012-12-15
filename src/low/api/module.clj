@@ -30,10 +30,10 @@
   (LLVM :SetDataLayout module triple))
 
 (defn link [module module-to-link preserv?]
-  {:pre [(>= @llvm-version 3.2)]
-   (let [out (pointer :char*)]
-     (assoc (LLVM :LinkModules module module-to-link preserv? out)
-       :out out))})
+  {:pre [(>= @llvm-version 3.2)]}
+  (let [out (pointer :char*)]
+    (assoc (LLVM :LinkModules module module-to-link preserv? out)
+      :out out)))
 
 (defn dump! [module]
   (LLVM :DumpModule module))
