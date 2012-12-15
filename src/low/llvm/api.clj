@@ -11,12 +11,12 @@
 
 (defenum type-kind
   #{3.0}
-  [:void :float :double :X86FP80 :FP128 :PPC_FP128
-   :label :integer :function :struct :array
-   :pointer :opaque :vector :metadata :X86_MMX]
+  [:void :float :double :X86-FP80 :FP128 :PPC-FP128
+   :label :int :function :struct :array
+   :pointer :opaque :vector :metadata :X86-MMX]
   #{3.1}
   [:void :half :float :double :X86-FP80 :FP128
-   :PPC-FP128 :label :integer :function :struct
+   :PPC-FP128 :label :int :function :struct
    :array :pointer :vector :metadata :X86-MMX])
 
 ;; we don't support :unwind either for 3.0
