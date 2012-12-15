@@ -1,6 +1,6 @@
 (ns low.api.type
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [pointer & to-str]]))
+            [low.native :refer [array-of pointer &]]))
 
 ;; integer
 (def ^:private integer-types
@@ -52,3 +52,8 @@
      {:pre [(floating-types type)
             (if (= :half type) (>= @llvm-version 3.1) true)]}
      (LLVM (keyword (str (floating-types type) "TypeInContext")) context)))
+
+;; function
+(defn function [return-type arg-types var-arg?]
+  (let [arg-count (count arg-types)]
+    (LLVM :FunctionType return-type (array-of :type-ref arg-types) var-arg?)))

@@ -75,6 +75,7 @@
 
   execution-engine-ref*
   value-ref*
+  type-ref*
   char**)
 
 (def ^:private llvm-api
@@ -140,7 +141,8 @@
    [:X86FP80TypeInContext [:context-ref] :type-ref]
    [:FP128TypeInContext [:context-ref] :type-ref]
    [:PPCFP128TypeInContext [:context-ref] :type-ref]
-    ;; PassManager
+   [:FunctionType [:type-ref :type-ref* :unsigned :bool] :type-ref]
+   ;; PassManager
    [:CreatePassManager [] :pass-manager-ref]
    [:CreateFunctionPassManagerForModule [:module-ref] :pass-manager-ref]
    [:CreateFunctionPassManager [:module-provider-ref] :pass-manager-ref]
