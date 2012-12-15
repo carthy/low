@@ -168,9 +168,11 @@
 ;;         pointer (Native/getDirectBufferPointer buffer)]
 ;;     {:pointer pointer :buffer buffer}))
 
-(defn pointer [type]
-  (->Expr (doto (Memory. Pointer/SIZE) .clear)
-          (keyword (str (name type) "*"))))
+(defn pointer
+  ([type] (pointer type 1))
+  ([type n]
+     (->Expr (doto (Memory. (* n Pointer/SIZE)) .clear)
+             (keyword (str (name type) "*")))))
 
 (defn & [ptr]
   (let [t-name (name (:type ptr))]
