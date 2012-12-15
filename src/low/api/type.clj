@@ -58,9 +58,12 @@
      (LLVM (keyword (str (floating-types type) "TypeInContext")) context)))
 
 ;; function
-(defn function [return-type arg-types var-arg?]
-  (let [arg-count (count arg-types)]
-    (LLVM :FunctionType return-type (array-of :type-ref arg-types) arg-count var-arg?)))
+(defn function
+  ([return-type [& arg-types]]
+     (function return-type arg-types false))
+  ([return-type [& arg-types] var-arg?]
+     (let [arg-count (count arg-types)]
+       (LLVM :FunctionType return-type (array-of :type-ref arg-types) arg-count var-arg?))))
 
 (defn arg-count [function]
   (LLVM :CountParamTypes function))
