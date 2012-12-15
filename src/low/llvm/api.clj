@@ -142,6 +142,10 @@
    [:FP128TypeInContext [:context-ref] :type-ref]
    [:PPCFP128TypeInContext [:context-ref] :type-ref]
    [:FunctionType [:type-ref :type-ref* :unsigned :bool] :type-ref]
+   [:CountParamTypes [:type-ref] :unsigned]
+   [:GetParamTypes [:type-ref :type-ref*] :void]
+   [:GetReturnType [:type-ref] :type-ref]
+   [:FunctionVarArg [:type-ref] :bool]
    ;; PassManager
    [:CreatePassManager [] :pass-manager-ref]
    [:CreateFunctionPassManagerForModule [:module-ref] :pass-manager-ref]
