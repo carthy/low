@@ -119,11 +119,12 @@
            :double* (->Type :double* DoubleBuffer identity identity)}))
 
 (defn get-type [t]
-  (let [t (if (expr? t) (:type t) t)
-        t (:type (@type-map t))]
+  (let [t (if (expr? t) (:type t) t)]
     (if (keyword? t)
-      (get-type t)
-      t)))
+      (get-type (:type (@type-map t)))
+      (if (class? t)
+        t
+        (class t)))))
 
 (defn get-type* [t]
   (let [t (get-type t)]
