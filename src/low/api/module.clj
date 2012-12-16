@@ -76,7 +76,7 @@
 
 (defn functions [module]
   (lazy-seq (cons (first-function module)
-                  (take-while #(not= (last-function module %))
+                  (take-while deref
                               (repeatedly #(next-function module))))))
 
 ;; global variables
