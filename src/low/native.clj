@@ -139,9 +139,7 @@
 (defn adjust [types args]
   (map #(if (expr? %2)
           %2
-          (if (= (get-type* %)
-                 (get-type* %2))
-            (->Expr %2 %)))
+          (->Expr %2 %))
        types args))
 
 (defn matching-types [args r]
