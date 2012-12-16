@@ -118,6 +118,9 @@
    [:AddAlias [:module :type :value :constchar*] :value]
    [:VerifyModule [:module :verifier-failure-action]]
    ;; Types
+   [:GetTypeKind [:type] :type-kind]
+   [:TypeIsSized [:type] :bool]
+   [:GetTypeInContext [:type] :context]
    [:IntType [:unsigned] :type]
    [:Int1Type [] :type]
    [:Int8Type [] :type]
@@ -148,7 +151,6 @@
    [:GetParamTypes [:type :type*] :void]
    [:GetReturnType [:type] :type]
    [:IsFunctionVarArg [:type] :bool]
-   [:GetTypeKind [:type] :type-kind]
    [:StructType [:type* :unsigned :bool] :type]
    [:StructTypeInContext [:context :type* :unsigned :bool] :type]
    [:StructCreateNamed [:context :char*] :type]

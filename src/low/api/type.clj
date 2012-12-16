@@ -2,13 +2,19 @@
   (:refer-clojure :exclude [type struct])
   (:require [low.llvm :refer [LLVM llvm-version]]
             [low.native :refer [array-of pointer to-ptr-vec &]]
-            [low.api.context :refer [context]]
+            [low.api.context :as c]
             [low.api.type.integer :as integer]
             [low.api.type.floating :as floating]
             [low.api.type.struct :as struct]))
 
 (defn type [t]
   (LLVM :GetTypeKind t))
+
+(defn sized? [t]
+  (LLVM :TypeIsSized t))
+
+(defn context [t]
+  (LLVM :GetTypeContext t))
 
 ;; integer
 (defn integer
@@ -56,14 +62,14 @@
 
 (defn struct
   ([name element-types packed?]
-     (create-struct (context) name element-types packed?))
+     (create-struct (c/context) name element-types packed?))
   ([context name element-types packed?]
      (doto (opaque-struct context name)
        (struct/body! element-types packed?))))
 
 (defn opaque-struct
   ([name]
-     (opaque-struct (context) name))
+     (opaque-struct (c/context) name))
   ([context name]
      (LLVM :StructCreateNamed context name)))
 
