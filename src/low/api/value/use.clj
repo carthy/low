@@ -8,6 +8,11 @@
 (defn next [value]
   (LLVM :GetNextUse value))
 
+(defn uses [value]
+  (lazy-seq (cons (first value)
+                  (take-while deref ;; while not nil
+                              (repeatedly #(next value))))))
+
 (defn user [use]
   (LLVM :GetUser use))
 
