@@ -264,6 +264,9 @@
    [:GetNextUse [:value] :use]
    [:GetUser [:use] :value]
    [:GetUsedValue [:use] :value]
+   [:GetOperand [:value :unsigned] :value]
+   [:SetOperand [:value :unsigned :value]]
+   [:GetNumOperands [:value] :int]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
