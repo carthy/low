@@ -260,6 +260,10 @@
    [:IsAConstantExpr [:value] :value]
    [:IsAConstant [:value] :value]
    [:IsAIndirectBrInst [:value] :value]
+   [:GetFirstUse [:value] :use]
+   [:GetNextUse [:value] :use]
+   [:GetUser [:use] :value]
+   [:GetUsedValue [:use] :value]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
