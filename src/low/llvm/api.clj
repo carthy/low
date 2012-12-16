@@ -119,11 +119,11 @@
    [:GetNextGlobal [:value] :value]
    [:GetPreviousGlobal [:value] :value]
    [:AddAlias [:module :type :value :constchar*] :value]
-   [:VerifyModule [:module :verifier-failure-action]]
+   [:VerifyModule [:module :verifier-failure-action :char**] :bool]
    ;; Types
    [:GetTypeKind [:type] :type-kind]
    [:TypeIsSized [:type] :bool]
-   [:GetTypeInContext [:type] :context]
+   [:GetTypeContext [:type] :context]
    [:IntType [:unsigned] :type]
    [:Int1Type [] :type]
    [:Int8Type [] :type]
