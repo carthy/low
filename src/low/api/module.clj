@@ -103,7 +103,7 @@
 
 (defn globals [module]
   (lazy-seq (cons (first-global module)
-                  (take-while #(not= (last-global module %))
+                  (take-while deref
                               (repeatedly #(next-global module))))))
 
 ;; named metadata
