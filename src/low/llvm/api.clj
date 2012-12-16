@@ -112,7 +112,7 @@
    [:GetNextFunction [:module] :value]
    [:GetPreviousFunction [:module] :value]
    [:AddGlobal [:module :type :constchar*] :value]
-   [:AddGlobalInAddressSpace [:module :type :constchar* :unsigned] :value]
+   [:AddGlobalInAddressSpace [:module :type :constchar* :address-space] :value]
    [:GetNamedGlobal [:module :constchar*] :value]
    [:GetFirstGlobal [:module] :value]
    [:GetLastGlobal [:module] :value]
