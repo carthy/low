@@ -1,7 +1,7 @@
 (ns low.api.module
   (:refer-clojure :exclude [type])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [pointer & to-str]]))
+            [low.native :refer [pointer & to-str to-ptr-vec]]))
 
 (defn create
   ([^String name]
@@ -53,7 +53,7 @@
 (defn verify [module failure-action]
   (let [err (pointer :char*)]
     (assoc (LLVM :VerifyModule module failure-action err)
-      :err (& err))))
+      :err (to-str (& err)))))
 
 ;; functions
 (defn add-function [module name function]
@@ -105,3 +105,19 @@
   (lazy-seq (cons (first-global module)
                   (take-while #(not= (last-global module %))
                               (repeatedly #(next-global module))))))
+
+;; named metadata
+(defn metadata-operand! [module name val]
+  {:pre [(>= @llvm-version 3.2)]}
+  (LLVM :AddNamedMetadataOperand module name val))
+
+(defn metadata-operands-count [module name]
+  {:pre [(>= @llvm-version 3.2)]}
+  (LLVM :GetNamedMetadataNumOperands module name))
+
+(defn metadata-operands [module name]
+  {:pre [(>= @llvm-version 3.2)]}
+  (let [metadata-operands-c @(metadata-operands-count module name)
+        ret (pointer :value metadata-operands-count)]
+    (LLVM :GetNamedMetadataOperands module name ret)
+    (to-ptr-vec ret metadata-operands-c)))
