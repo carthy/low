@@ -1,7 +1,7 @@
 (ns low.api.type
-  (:refer-clojure :exclude [type struct])
+  (:refer-clojure :exclude [type struct vector])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [array-of pointer to-ptr-vec &]]
+            [low.native :refer [array-of]]
             [low.api.context :as c]
             [low.api.type.integer :as integer]
             [low.api.type.floating :as floating]
@@ -15,6 +15,9 @@
 
 (defn context [t]
   (LLVM :GetTypeContext t))
+
+(defn elements-type [sequential]
+  (LLVM :GetElementType sequential))
 
 ;; integer
 (defn integer
@@ -81,3 +84,15 @@
      (LLVM :StructTypeInContext context
            (array-of :type element-types)
            (count element-types) packed?)))
+
+;; array
+(defn array [elements-type length]
+  (LLVM :ArrayType elements-type length))
+
+;; pointer
+(defn pointer [element-type adress-space]
+  (LLVM :PointerType element-type adress-space))
+
+;; vector
+(defn vector [elements-type length]
+  (LLVM :VectorType elements-type length))
