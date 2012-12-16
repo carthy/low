@@ -19,7 +19,6 @@
 (defn elements-type [sequential]
   (LLVM :GetElementType sequential))
 
-;; integer
 (defn integer
   ([] (LLVM :Int32Type))
   ([bits-or-context]
@@ -41,7 +40,6 @@
          (assert n)
          (integer context n)))))
 
-;; floating point
 (defn floating
   ([type]
      {:pre [(floating/types type)
@@ -52,7 +50,6 @@
             (if (= :half type) (>= @llvm-version 3.1) true)]}
      (LLVM (keyword (str (floating/types type) "TypeInContext")) context)))
 
-;; function
 (defn function
   ([return-type [& arg-types]]
      (function return-type arg-types false))
@@ -60,7 +57,6 @@
      (let [arg-count (count arg-types)]
        (LLVM :FunctionType return-type (array-of :type arg-types) arg-count var-arg?))))
 
-;; struct
 (declare opaque-struct)
 
 (defn struct
@@ -85,14 +81,23 @@
            (array-of :type element-types)
            (count element-types) packed?)))
 
-;; array
 (defn array [elements-type length]
   (LLVM :ArrayType elements-type length))
 
-;; pointer
 (defn pointer [element-type adress-space]
   (LLVM :PointerType element-type adress-space))
 
-;; vector
 (defn vector [elements-type length]
   (LLVM :VectorType elements-type length))
+
+(defn void
+  ([] (LLVM :VoidType))
+  ([context] (LLVM :VoidTypeInContext context)))
+
+(defn label
+  ([] (LLVM :LabelType))
+  ([context] (LLVM :LabelTypeInContext context)))
+
+(defn X86-MMX
+  ([] (LLVM :X86MMXType))
+  ([context] (LLVM :X86MMXTypeInContext context)))

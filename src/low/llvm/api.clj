@@ -63,6 +63,9 @@
 (defenum verifier-failure-action
   [:abort-process :print-message :return-status])
 
+(defenum address-space
+  [:generic :global :const-not-gen :shared :const :local])
+
 (defpointers
   context
   module
@@ -160,6 +163,19 @@
    [:GetStructElementTypes [:type :type*] :void]
    [:IsPackedStruct [:type] :bool]
    [:IsOpaqueStruct [:type] :bool]
+   [:GetElementType [:type] :type]
+   [:ArrayType [:type :unsigned] :type]
+   [:GetArrayLength [:type] :unsigned]
+   [:PointerType [:type :address-space] :type]
+   [:GetPointerAddressSpace [:type] :address-space]
+   [:VectorType [:type :unsigned] :type]
+   [:GetVectorSize [:type] :unsigned]
+   [:VoidType [] :type]
+   [:VoidTypeInContext [:context] :type]
+   [:LabelType [] :type]
+   [:LabelTypeInContext [:context] :type]
+   [:X86MMXType [] :type]
+   [:X86MMXTypeInContext [:context] :type]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
