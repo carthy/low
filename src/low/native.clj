@@ -126,16 +126,6 @@
         t
         (class t)))))
 
-(defn get-type* [t]
-  (let [t (get-type t)]
-    (if (#{Byte/TYPE Boolean/TYPE Character/TYPE Short/TYPE
-           Integer/TYPE Long/TYPE Float/TYPE Double/TYPE
-           Byte Boolean Character Short Integer Long Float Double} t)
-      Number
-      (if (#{Memory Pointer} t)
-        Pointer
-        t))))
-
 (defn adjust [types args]
   (map #(if (expr? %2)
           %2
@@ -159,12 +149,6 @@
                   (.invoke f (to-array (map bind r)))
                   (.invoke f ret-class (to-array (map bind r)))))
           :type ret-type})))))
-
-;; (defn malloc [size]
-;;   (let [buffer (doto (ByteBuffer/allocateDirect size)
-;;                  (.order ByteOrder/LITTLE_ENDIAN))
-;;         pointer (Native/getDirectBufferPointer buffer)]
-;;     {:pointer pointer :buffer buffer}))
 
 (defn pointer
   ([type] (pointer type 1))
