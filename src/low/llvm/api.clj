@@ -89,6 +89,8 @@
   type*
   char**)
 
+(typedef user :value)
+
 (def ^:private llvm-api
   [;; Context
    [:ContextCreate [] :context]
@@ -262,11 +264,11 @@
    [:IsAIndirectBrInst [:value] :value]
    [:GetFirstUse [:value] :use]
    [:GetNextUse [:value] :use]
-   [:GetUser [:use] :value]
+   [:GetUser [:use] :user]
    [:GetUsedValue [:use] :value]
-   [:GetOperand [:value :unsigned] :value]
-   [:SetOperand [:value :unsigned :value]]
-   [:GetNumOperands [:value] :int]
+   [:GetOperand [:user :unsigned] :value]
+   [:SetOperand [:user :unsigned :value]]
+   [:GetNumOperands [:user] :int]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
