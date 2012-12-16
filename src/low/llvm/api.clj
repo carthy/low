@@ -66,15 +66,23 @@
 (defenum address-space
   [:generic :global :const-not-gen :shared :const :local])
 
+(defenum landing-pad-clause
+  [:catch :filter])
+
 (defpointers
   context
   module
-  module-provider
   type
   value
+  baisc-block
+  builder
+  module-provider
+  memory-buffer
   pass-manager
+  pass-register
   execution-engine
   generic-value
+  use
 
   execution-engine*
   value*
