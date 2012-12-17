@@ -12,7 +12,7 @@
 
 (defn get-function [lib name]
   (if (string? lib)
-    (Function/getFunction lib name)
+    (Function/getFunction ^String lib ^String name)
     (.getFunction ^NativeLibrary lib name)))
 
 (def native-long
@@ -133,8 +133,7 @@
        types args))
 
 (defn matching-types [args r]
-  (and (= (count args)
-          (count r))
+  (and (= (count args) (count r))
        (every? true? (map = args (map :type r)))))
 
 (defn import-function [lib name args ret-type]
@@ -146,8 +145,8 @@
         (map->Expr
          {:val ((:ret-f (@type-map ret-type))
                 (if (= Void/TYPE ret-class)
-                  (.invoke f (to-array (map bind r)))
-                  (.invoke f ret-class (to-array (map bind r)))))
+                  (.invoke ^Function f (to-array (map bind r)))
+                  (.invoke ^Function f ret-class (to-array (map bind r)))))
           :type ret-type})))))
 
 (defn pointer
@@ -158,14 +157,14 @@
 
 (defn & [ptr]
   (let [t-name (name (:type ptr))]
-   (->Expr (.getPointer @ptr 0)
+   (->Expr (.getPointer ^Pointer @ptr 0)
            (keyword (.substring t-name 0 (dec (.length t-name)))))))
 
 (defn to-str [ptr]
-  (.getString @ptr 0))
+  (.getString ^Pointer @ptr 0))
 
 (defn to-ptr-vec [ptr cnt]
-  (vec (.getPointerArray @ptr 0 cnt)))
+  (vec (.getPointerArray ^Pointer  @ptr 0 cnt)))
 
 (defn array-of [type seq]
   (map->Expr {:val (into-array (map bind seq))
