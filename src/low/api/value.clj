@@ -68,3 +68,6 @@
 
 (defn defined? [value]
   (not (LLVM :IsUndef value)))
+
+(defn null? [value]
+  (LLVM :IsNull value))

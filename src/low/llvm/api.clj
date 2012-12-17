@@ -269,6 +269,11 @@
    [:GetOperand [:user :unsigned] :value]
    [:SetOperand [:user :unsigned :value]]
    [:GetNumOperands [:user] :int]
+   [:ConstNull [:type] :value]
+   [:ConstAllOnes [:type] :value]
+   [:GetUndef [:type] :value]
+   [:IsNull [:value] :bool]
+   [:ConstPointerNull [:type] :value]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
