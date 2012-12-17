@@ -92,6 +92,7 @@
            :longlong (->Type :longlong Long/TYPE identity long)
            :__int64 (->Type :__int64 Long/TYPE identity long)
            :i8 (->Type :i8 Byte/TYPE identity byte)
+           :ui8 (->Type :ui8 Short/TYPE identity short)
            :i16 (->Type :i16 Short/TYPE identity short)
            :i32 (->Type :i32 Integer/TYPE identity int)
            :i64 (->Type :i64 Long/TYPE identity long)
