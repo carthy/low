@@ -1,6 +1,6 @@
 (ns low.api.pass-manager
   (:refer-clojure :exclude [type])
-  (:require [clojure.string :as s]
+  (:require [clojure.utils :refer [camel-case]]
             [low.llvm :refer [LLVM]]))
 
 (defn create
@@ -65,6 +65,5 @@
   (when (valid-passes pass)
    (let [pass (keyword (str "Add"
                             (or (special-pass-name pass)
-                                (str (s/join (map s/capitalize (s/split (name pass) #"-")))
-                                     "Pass"))))]
+                                (str (name (camel-case pass)) "Pass"))))]
      (apply LLVM pass manager args))))

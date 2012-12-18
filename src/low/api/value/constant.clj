@@ -1,7 +1,8 @@
 (ns low.api.value.constant
   (:refer-clojure :exclude [vector])
   (:require [low.llvm :refer [LLVM]]
-            [low.native :refer [array-of]]))
+            [low.native :refer [array-of]]
+            [low.utils :refer [camel-case]]))
 
 ;; do those belong here?
 (defn sizeof [type]
@@ -113,7 +114,7 @@
 (defn expr [expr & args]
   (apply LLVMC (keyword
                 (or (special-type-name expr)
-                    (s/join (map s/capitalize (s/split (name expr) #"-")))))
+                    (camel-case expr)))
          args))
 
 (defn block-address [f basic-block]
