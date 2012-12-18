@@ -1,4 +1,5 @@
 (ns low.api.value.constant
+  (:refer-clojure :exclude [vector])
   (:require [low.llvm :refer [LLVM]]
             [low.native :refer [array-of]]))
 
@@ -47,3 +48,18 @@
      (LLVMC :String string len null-term?))
   ([context string len null-term?]
      (LLVMC :StringInContext context string len null-term?)))
+
+(defn struct
+  ([vals count packed?]
+     (LLVMC :Struct vals count packed?))
+  ([context vals count packed?]
+     (LLVMC :StructInContext context vals count packed?)))
+
+(defn named-struct [type vals count]
+  (LLVMC :NamedStruct type vals count))
+
+(defn array [type vals length]
+  (LLVMC :Array type vals length))
+
+(defn vector [vals size]
+  (LLVMC :Vector vals size))
