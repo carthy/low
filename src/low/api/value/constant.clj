@@ -3,6 +3,13 @@
   (:require [low.llvm :refer [LLVM]]
             [low.native :refer [array-of]]))
 
+;; do those belong here?
+(defn sizeof [type]
+  (LLVM :SizeOf type))
+
+(defn alignof [type]
+  (LLVM :AlignOf type))
+
 (defmacro ^:private LLVMC [op & args]
   `(LLVM ~(->> op name (str "Const") keyword) ~@args))
 
