@@ -41,3 +41,9 @@
 
 (defn int-s-ext-value [value]
   (LLVMC :IntGetSExtValue value))
+
+(defn string
+  ([string len null-term?]
+     (LLVMC :String string len null-term?))
+  ([context string len null-term?]
+     (LLVMC :StringInContext context string len null-term?)))

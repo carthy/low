@@ -283,6 +283,8 @@
    [:ConstRealOfStringAndSize [:type :constcahr* :unsigned] :value]
    [:ConstIntGetZExtValue [:value] :longlong]
    [:ConstIntGetSExtValue [:value] :longlong]
+   [:ConstantString [:constchar* :unsigned :bool] :value]
+   [:ConstantStringInContext [:context :constchar* :unsigned :bool] :value]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
