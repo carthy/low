@@ -10,8 +10,8 @@
 (defn alignof [type]
   (LLVM :AlignOf type))
 
-(defmacro ^:private LLVMC [op & args]
-  `(LLVM ~(->> op name (str "Const") keyword) ~@args))
+(defn ^:private LLVMC [op & args]
+  (apply LLVM (->> op name (str "Const") keyword) args))
 
 (defn null [type]
   (LLVMC :Null type))
