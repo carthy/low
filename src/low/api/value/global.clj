@@ -1,7 +1,7 @@
 (ns low.api.value.global
   (:require [low.llvm :refer [LLVM]]))
 
-(defn parent [global]
+(defn module [global]
   (LLVM :GetGlobalParent global))
 
 (defn declaration? [global]
