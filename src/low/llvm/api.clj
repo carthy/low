@@ -363,6 +363,13 @@
    [:SetVisibility [:value :visibility] :void]
    [:GetAlignment [:value] :unsigned]
    [:SetAlignment [:value :unsigned] :void]
+   [:DeleteGlobal [:value] :void]
+   [:GetInitializer [:value] :value]
+   [:SetInitializer [:value :value] :void]
+   [:IsThreadLocal [:value] :bool]
+   [:SetThreadLocal [:value :bool] :void]
+   [:IsGlobalConstant [:value] :bool]
+   [:SetGlobalConstant [:value :bool] :void]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
