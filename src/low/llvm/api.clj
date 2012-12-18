@@ -52,11 +52,11 @@
    73 :mblaze-interrupt 74 :mblaze-svol
    75 :spir-func 76 :spir-func 77 :intel-ocl-bi})
 
-(defenum int-predicate
+(defenum integer-predicate
   (zipmap (range 32 42) [:eq :ne :ugt :uge :ult
                          :ule :sgt :sge :slt :sle]))
 
-(defenum real-predicate
+(defenum floating-predicate
   [false :oeq :ogt :oge :olt :ole :one :ord
    :uno :ueq :ugt :uge :ult :ule :une true])
 
@@ -84,6 +84,7 @@
   generic-value
   use
 
+  unsigned*
   execution-engine*
   value*
   type*
