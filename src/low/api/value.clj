@@ -11,7 +11,7 @@
              :constant-vector :global-value :function :global-alias :global-variable
              :undef-value :instruction :binary-operator :call-inst :intrinsic-inst
              :debug-info-intrinsic :debug-declare-inst :mem-intrinsic :mem-copy-inst
-             :mem-move-inst :mem-set-inst :cmp-inst :fcmp-inst :icmp-inst
+             :mem-move-inst :mem-set-inst :cmp-inst :f-cmp-inst :i-cmp-inst
              :extract-element-inst :get-element-ptr-inst :insert-element-inst
              :insert-value-inst :landing-pad-inst :phi-node :select-inst
              :shuffle-vector-inst :store-inst :terminator-inst :branch-inst
@@ -24,8 +24,6 @@
 (def ^:private special-type-name
   {:metadata-node "MDNode"
    :metadata-string "MDString"
-   :fcmp-inst "FCmpInst"
-   :icmp-inst "ICmpInst"
    :constant-fp "ConstantFP"
    :debug-declare-inst "DbgDeclareInst"
    :debug-info-intrinsic "DbgInfoIntrinsic"
