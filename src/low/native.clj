@@ -97,6 +97,9 @@
            :long (->Type :long (first native-long) identity (second native-long))
            :longlong (->Type :longlong Long/TYPE identity long)
            :__int64 (->Type :__int64 Long/TYPE identity long)
+           :ulonglong (->Type :ulonglong Long/TYPE
+                              (fn [x] (->> x Long/toHexString (str "0x") read-string))
+                              (fn [x] (.longValue x)))
            :i8 (->Type :i8 Byte/TYPE identity byte)
            :ui8 (->Type :ui8 Short/TYPE identity short)
            :i16 (->Type :i16 Short/TYPE identity short)
