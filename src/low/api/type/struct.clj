@@ -1,11 +1,11 @@
 (ns low.api.type.struct
   (:refer-clojure :exclude [name])
   (:require [low.llvm :refer [LLVM]]
-            [low.native :refer [pointer to-ptr-vec array-of]]))
+            [low.native :refer [pointer to-ptr-vec]]))
 
 (defn body! [struct element-types packed?]
   (LLVM :StructSetBody struct
-        (array-of :type element-types)
+         element-types
         (count element-types) packed?))
 
 (defn name [t]

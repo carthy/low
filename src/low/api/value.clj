@@ -1,7 +1,6 @@
 (ns low.api.value
   (:refer-clojure :exclude [type isa? name cast])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [array-of]]
             [low.utils :refer [came-case]]))
 
 (def types #{:argument :basic-block :inline-asm :metadata-node :metadata-string

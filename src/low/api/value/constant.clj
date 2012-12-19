@@ -1,7 +1,6 @@
 (ns low.api.value.constant
   (:refer-clojure :exclude [vector])
   (:require [low.llvm :refer [LLVM]]
-            [low.native :refer [array-of]]
             [low.utils :refer [camel-case]]))
 
 ;; do those belong here?
@@ -32,7 +31,7 @@
        (LLVMC :Int type num c)
        (if (string? num)
          (LLVMC :IntOfString type num c)
-         (LLVMC :IntOfArbitraryPrecision type num (array-of :__int64 c)))))
+         (LLVMC :IntOfArbitraryPrecision type num c))))
   ([type num len radix]
      (LLVMC :IntOfStringAndSize type num len radix)))
 

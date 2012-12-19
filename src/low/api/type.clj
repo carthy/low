@@ -1,7 +1,6 @@
 (ns low.api.type
   (:refer-clojure :exclude [type struct vector])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [array-of]]
             [low.api.context :as c]
             [low.api.type.integer :as integer]
             [low.api.type.floating :as floating]
@@ -55,7 +54,7 @@
      (function return-type arg-types false))
   ([return-type [& arg-types] var-arg?]
      (let [arg-count (count arg-types)]
-       (LLVM :FunctionType return-type (array-of :type arg-types) arg-count var-arg?))))
+       (LLVM :FunctionType return-type arg-types arg-count var-arg?))))
 
 (declare opaque-struct)
 
@@ -74,11 +73,11 @@
 
 (defn literal-struct
   ([element-types packed?]
-     (LLVM :StructType (array-of :type element-types)
+     (LLVM :StructType element-types
            (count element-types) packed?))
   ([context element-types packed?]
      (LLVM :StructTypeInContext context
-           (array-of :type element-types)
+           element-types
            (count element-types) packed?)))
 
 (defn array [elements-type length]
