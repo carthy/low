@@ -1,4 +1,4 @@
-(ns low.api.value.global.var
+(ns low.api.value.variable
   (:require [low.llvm :refer [LLVM]]))
 
 (defn destroy! [global]

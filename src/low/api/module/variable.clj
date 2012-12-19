@@ -1,4 +1,4 @@
-(ns low.api.module.global
+(ns low.api.module.variable
   (:refer-clojure :exclude [get first last next])
   (:require [low.llvm :refer [LLVM]]))
 
@@ -8,7 +8,7 @@
   ([module type name address-space]
      (LLVM :AddGlobalInAddressSpace module type name address-space)))
 
-(defn global [module name]
+(defn variable [module name]
   (LLVM :GetNamedGlobal module name))
 
 (defn first [module]
@@ -23,7 +23,7 @@
 (defn prev [module]
   (LLVM :GetPreviousGlobal module))
 
-(defn globals [module]
+(defn variables [module]
   (lazy-seq (cons (first module)
                   (take-while deref
                               (repeatedly #(next module))))))
