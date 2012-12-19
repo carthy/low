@@ -391,7 +391,10 @@
    [:RemoveAttribute [:value :attribute] :void]
    [:GetAttribute [:value] :attribute]
    [:SetParamAlignment [:value :unsigned] :void]
-
+   [:MDStringInContext [:context :constchar* :unsigned] :value]
+   [:MDString [:constchar* :unsigned] :value]
+   [:MDNodeInContext [:context :value* :unsigned] :value]
+   [:MDNode [:value* :unsigned] :value]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
