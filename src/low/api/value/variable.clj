@@ -1,7 +1,7 @@
 (ns low.api.value.variable
   (:require [low.llvm :refer [LLVM]]))
 
-(defn destroy! [global]
+(defn delete! [global]
   (LLVM :DeleteGlobal global))
 
 (defn initializer [global]
