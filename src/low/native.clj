@@ -66,10 +66,16 @@
          return-f# #(coll# %)]
      (typedef ~name :int return-f# bind-f#)))
 
+(declare ^:private arr)
 (defmacro defpointers [& types]
   (cons 'do
         (for [type types]
-          `(typedef ~type Pointer))))
+          `(typedef ~type Pointer identity ~arr))))
+
+(defn ^:private arr [coll]
+  (if (coll? coll)
+    (to-array (map bind coll))
+    coll))
 
 (defn type? [t]
   (instance? Type t))
@@ -99,25 +105,25 @@
            :float (->Type :float Float/TYPE identity float)
            :double (->Type :double Double/TYPE identity double)
            :void (->Type :void Void/TYPE identity identity)
-           :void* (->Type :void* Pointer identity identity)
-           :byte* (->Type :byte* ByteBuffer identity identity)
-           ;;:char* (->Type :char* ByteBuffer identity identity)
-           :char* (->Type :char* String identity identity)
+           :void* (->Type :void* Pointer identity arr)
+           :byte* (->Type :byte* ByteBuffer identity arr)
+           :char* (->Type :char* ByteBuffer identity arr)
+           ;; :char* (->Type :char* String identity arr)
            :constchar* (->Type :constchar* String identity identity)
-           :wchar_t* (->Type :wchar_t* CharBuffer identity identity)
+           :wchar_t* (->Type :wchar_t* CharBuffer identity arr)
            :constwchar_t* (->Type :constwchar_t* WString identity identity)
-           :short* (->Type :short* ShortBuffer identity identity)
-           :int* (->Type :int* IntBuffer identity identity)
-           :long* (->Type :long* native-long-buffer identity identity)
-           :size_t* (->Type :size_t* native-long-buffer identity identity)
-           :longlong* (->Type :longlong* LongBuffer identity identity)
-           :__int64* (->Type :__int64* LongBuffer identity identity)
-           :i8* (->Type :i8* ByteBuffer identity identity)
-           :i16* (->Type :i16* ShortBuffer identity identity)
-           :i32* (->Type :i32* IntBuffer identity identity)
-           :i64* (->Type :i64* LongBuffer identity identity)
-           :float* (->Type :float* FloatBuffer identity identity)
-           :double* (->Type :double* DoubleBuffer identity identity)}))
+           :short* (->Type :short* ShortBuffer identity arr)
+           :int* (->Type :int* IntBuffer identity arr)
+           :long* (->Type :long* native-long-buffer identity arr)
+           :size_t* (->Type :size_t* native-long-buffer identity arr)
+           :longlong* (->Type :longlong* LongBuffer identity arr)
+           :__int64* (->Type :__int64* LongBuffer identity arr)
+           :i8* (->Type :i8* ByteBuffer identity arr)
+           :i16* (->Type :i16* ShortBuffer identity arr)
+           :i32* (->Type :i32* IntBuffer identity arr)
+           :i64* (->Type :i64* LongBuffer identity arr)
+           :float* (->Type :float* FloatBuffer identity arr)
+           :double* (->Type :double* DoubleBuffer identity arr)}))
 
 (defn get-type [t]
   (let [t (if (expr? t) (:type t) t)]
@@ -166,7 +172,3 @@
 
 (defn to-ptr-vec [ptr cnt]
   (vec (.getPointerArray ^Pointer  @ptr 0 cnt)))
-
-(defn array-of [type seq]
-  (map->Expr {:val (into-array (map bind seq))
-              :type (keyword (str (name type) "*"))}))
