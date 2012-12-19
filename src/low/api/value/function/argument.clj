@@ -1,5 +1,5 @@
-(ns low.api.value.function.param
-  (:refer-clojure :exclude [count])
+(ns low.api.value.function.argument
+  (:refer-clojure :exclude [count get first last next])
   (:require [low.llvm :refer [LLVM]]))
 
 (defn count [function]
