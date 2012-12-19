@@ -17,8 +17,8 @@
 
 (def native-long
   (case NativeLong/SIZE
-    4 [Integer int]
-    8 [Long long]))
+    4 [Integer/TYPE int]
+    8 [Long/TYPE long]))
 
 (def native-long-buffer
   (case NativeLong/SIZE
