@@ -1,7 +1,8 @@
 (ns low.api.value
   (:refer-clojure :exclude [type isa? name cast])
-  (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.utils :refer [came-case]]))
+  (:require [clojure.core :as c.c]
+            [low.llvm :refer [LLVM llvm-version]]
+            [low.utils :refer [camel-case]]))
 
 (def types #{:argument :basic-block :inline-asm :metadata-node :metadata-string
              :user :constant :block-address :constant-aggregate-zero :constant-array
@@ -38,7 +39,7 @@
 (defn isa? [value type]
   (LLVM (keyword (str "IsA"
                       (or (special-type-name type)
-                      (name (camel-case type)))))
+                          (c.c/name (camel-case type)))))
         value))
 
 (defn cast [value type]
