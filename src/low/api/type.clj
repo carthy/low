@@ -60,7 +60,7 @@
 
 (defn struct
   ([name element-types packed?]
-     (create-struct (c/context) name element-types packed?))
+     (struct (c/context) name element-types packed?))
   ([context name element-types packed?]
      (doto (opaque-struct context name)
        (struct/body! element-types packed?))))
