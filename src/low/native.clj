@@ -83,6 +83,18 @@
 (defn expr? [t]
   (instance? Expr t))
 
+(defn ^:private parse-unsigned-number [x]
+  (->> x Long/toHexString (str "0x") read-string))
+
+(defn ^:private uchar-f [x]
+  (.byteValue x))
+
+(defn ^:private uint-f [x]
+  (if (= long (second native-long)) (.longValue x) (.intValue x)))
+
+(defn ^:private ulonglong-f [x]
+  (.longValue x))
+
 (when (empty? @type-map)
   (reset! type-map
           {:void (->Type :void Void/TYPE identity identity)
@@ -96,15 +108,9 @@
            :longlong (->Type :longlong Long/TYPE identity long)
            :float (->Type :float Float/TYPE identity float)
            :double (->Type :double Double/TYPE identity double)
-           :uchar (->Type :uchar Byte/TYPE
-                          (fn [x] (->> x Long/toHexString (str "0x") read-string))
-                          (fn [x] (.byteValue x)))
-           :uint (->Type :uint (first native-long)
-                         (fn  [x] (->> x Long/toHexString (str "0x") read-string))
-                         (fn [x] (if (= long (second native-long)) (.longValue x) (.intValue x))))
-           :ulonglong (->Type :ulonglong Long/TYPE
-                              (fn [x] (->> x Long/toHexString (str "0x") read-string))
-                              (fn [x] (.longValue x)))
+           :uchar (->Type :uchar Byte/TYPE parse-unsigned-number uchar-f)
+           :uint (->Type :uint (first native-long) parse-unsigned-number uint-f)
+           :ulonglong (->Type :ulonglong Long/TYPE parse-unsigned-number ulonglong-f)
            :void* (->Type :void* Pointer identity arr)
            :byte* (->Type :byte* ByteBuffer identity arr)
            :char* (->Type :char* ByteBuffer identity arr)
@@ -116,12 +122,17 @@
            :long* (->Type :long* native-long-buffer identity arr)
            :size_t* (->Type :size_t* native-long-buffer identity arr)
            :longlong* (->Type :longlong* LongBuffer identity arr)
-           :double* (->Type :double* DoubleBuffer identity arr)})
+           :double* (->Type :double* DoubleBuffer identity arr)
+           :uchar* (->Type :uchar* ByteBuffer (partial map parse-unsigned-number)
+                           (comp to-array (partial map uchar-f)))
+           :uint* (->Type :uint* native-long-buffer (partial map parse-unsigned-number)
+                          (comp to-array (partial map uint-f)))
+           :ulonglong* (->Type :ulonglong* LongBuffer (partial map parse-unsigned-number)
+                               (comp to-array (partial map ulonglong-f)))})
   (typedef uint8_t :uchar)
   (typedef uint64_t :ulonglong)
-  (defpointers
-    uint*
-    char**))
+  (typedef uint64_t* :ulonglong*)
+  (defpointers char**))
 
 (defn get-type [t]
   (let [t (if (expr? t) (:type t) t)]
