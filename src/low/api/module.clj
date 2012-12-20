@@ -1,7 +1,7 @@
 (ns low.api.module
   (:refer-clojure :exclude [type])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [pointer & to-str to-ptr-vec]]))
+            [low.native :refer [pointer & to-str]]))
 
 (defn create
   ([^String name]
