@@ -11,5 +11,5 @@
     (vals coll)
     coll))
 
-(defn came-case [kw]
+(defn camel-case [kw]
   (keyword (s/join (map s/capitalize (s/split (name kw) #"-")))))
