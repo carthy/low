@@ -1,5 +1,5 @@
 (ns low.api.value.constant
-  (:refer-clojure :exclude [vector])
+  (:refer-clojure :exclude [vector struct])
   (:require [low.llvm :refer [LLVM]]
             [low.utils :refer [camel-case]]))
 
