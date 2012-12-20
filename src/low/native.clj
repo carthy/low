@@ -173,8 +173,8 @@
 
 (defn & [ptr]
   (let [t-name (name (:type ptr))]
-   (->Expr (.getPointer ^Pointer @ptr 0)
-           (keyword (.substring t-name 0 (dec (.length t-name)))))))
+    (->Expr (.getPointer ^Pointer @ptr 0)
+            (keyword (.substring t-name 0 (dec (.length t-name)))))))
 
 (defn to-str [ptr]
   (.getString ^Pointer @ptr 0))

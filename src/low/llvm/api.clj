@@ -186,7 +186,7 @@
    [:X86MMXType [] :type]
    [:X86MMXTypeInContext [:context] :type]
    ;; Values
-   [:TypeOf [:value] :value]
+   [:TypeOf [:value] :type]
    [:GetValueName [:value] :constchar*]
    [:SetValueName [:value :constchar*] :void]
    [:DumpValue [:value] :void]
