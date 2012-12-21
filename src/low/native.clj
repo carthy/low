@@ -30,7 +30,7 @@
                                     (if (false? @t)
                                       "false"
                                       "nil")) " (type: "))
-  (print (@type-map (:type t)))
+  (print-method (@type-map (:type t)) writer)
   (.write writer ")>"))
 
 ;;; private helpers ;;;
