@@ -69,7 +69,7 @@
 (defenum landing-pad-clause
   [:catch :filter])
 
-(defpointers
+(defopaques
   context
   module
   type
@@ -82,8 +82,9 @@
   pass-register
   execution-engine
   generic-value
-  use
+  use)
 
+(defpointers
   execution-engine*
   value*
   type*)
