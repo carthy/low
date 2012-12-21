@@ -15,12 +15,12 @@
     (Function/getFunction ^String lib ^String name)
     (.getFunction ^NativeLibrary lib name)))
 
-(def native-long
+(def ^:private native-long
   (case NativeLong/SIZE
     4 [Integer/TYPE int]
     8 [Long/TYPE long]))
 
-(def native-long-buffer
+(def ^:private native-long-buffer
   (case NativeLong/SIZE
     4 IntBuffer
     8 LongBuffer))
@@ -43,7 +43,6 @@
     ((or (:bind-f (@type-map type))
          identity) val)))
 
-(declare get-type)
 (defmethod print-method Expr [^Expr t ^Writer writer]
   (.write writer (str "<Expr: " (or (:val t)
                                     (if (false? (:val t))
