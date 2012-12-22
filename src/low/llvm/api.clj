@@ -397,6 +397,7 @@
    [:MDString [:constchar* :uint] :value]
    [:MDNodeInContext [:context :value* :uint] :value]
    [:MDNode [:value* :uint] :value]
+   [:GetMDString [:value :int*] :constchar*]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]
