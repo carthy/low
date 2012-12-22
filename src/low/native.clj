@@ -173,7 +173,7 @@
   ([type n]
      (let [t (keyword (str (name type) "*"))
            type (t @type-map)]
-       (if (and type (instance? Buffer type))
+       (if (and type ((supers (:type type)) Buffer))
          (make-expr (eval (list '. (:type type) 'allocate n)) t)
          (make-expr (doto (Memory. (* n Pointer/SIZE)) .clear) t)))))
 
@@ -189,7 +189,7 @@
      (.getString ^Pointer @ptr 0 len)))
 
 (defn to-ptr-vec [ptr cnt]
-  (vec (.getPointerArray ^Pointer  @ptr 0 cnt)))
+  (vec (.getPointerArray ^Pointer @ptr 0 cnt)))
 
 ;;; initialize type map;;:
 (when (empty? @type-map)
