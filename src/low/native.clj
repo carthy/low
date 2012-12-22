@@ -17,9 +17,7 @@
 (defrecord Expr [val type #_err #_out]
   IDeref
   (deref [this]
-    ((if (expr? val)
-       (ret-f type)
-       identity) val)))
+    ((ret-f type) val)))
 
 ;;; print-methods ;;;
 (defmethod print-method Type [^Type t ^Writer writer]
