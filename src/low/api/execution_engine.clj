@@ -12,7 +12,7 @@
                    :CreateJITCompiler
                    :CreateInterpreter)
                  :CreateExecutionEngine)
-        opt-level (or opt-level 3)
+        opt-level (or opt-level :default)
         action (if (= (:type module) :module)
                  (keyword (str (name action) "ForModule"))
                  action)

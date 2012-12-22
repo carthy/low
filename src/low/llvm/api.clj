@@ -69,6 +69,9 @@
 (defenum landing-pad-clause
   [:catch :filter])
 
+(defenum opt-level
+  [:none :less :default :aggressive])
+
 (defopaques
   context
   module
@@ -456,8 +459,8 @@
    [:CreateExecutionEngineForModule [:execution-engine* :module :char**] :bool]
    [:CreateInterpreter [:execution-engine* :module-provider :char**] :bool]
    [:CreateInterpreterForModule [:execution-engine* :module :char**] :bool]
-   [:CreateJITCompiler [:execution-engine* :module-provider :uint :char**] :bool]
-   [:CreateJITCompilerForModule [:execution-engine* :module :uint :char**] :bool]
+   [:CreateJITCompiler [:execution-engine* :module-provider :opt-level :char**] :bool]
+   [:CreateJITCompilerForModule [:execution-engine* :module :opt-level :char**] :bool]
    [:DisposeExecutionEngine [:execution-engine] :void]
    [:RunStaticConstructors [:execution-engine] :void]
    [:RunStaticDestructors [:execution-engine] :void]

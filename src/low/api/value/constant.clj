@@ -71,7 +71,6 @@
 (defn vector [vals size]
   (LLVMC :Vector vals size))
 
-
 (def exprs #{:neg :nsw-neg :nuw-neg :f-neg
              :add :nsw-add :nuw-add :f-add
              :sub :nsw-sub :nuw-sub :f-sub
