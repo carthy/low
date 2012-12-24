@@ -24,6 +24,7 @@
   (LLVM :GetPreviousGlobal module))
 
 (defn variables [module]
-  (lazy-seq (cons (first module)
-                  (take-while deref
-                              (repeatedly #(next module))))))
+  (let [first-v (first module)]
+    (lazy-seq (cons first-v
+                    (take-while deref
+                                (iterate next first-v))))))

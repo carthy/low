@@ -45,6 +45,14 @@
 (defn cast [value type]
   (isa? value type))
 
+;; ;; how is this any different from (isa? value :basic-block)?
+;; (defn basic-block? [value]
+;;   (LLVM :ValueIsBasicBlock value))
+
+;; ;; how is this any different from (cast value :basic-block)?
+;; (defn basic-block [value]
+;;   (LLVM :ValueAsBasicBlock value))
+
 (defn type [value]
   (LLVM :TypeOf value))
 

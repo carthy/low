@@ -23,15 +23,17 @@
 
 ;; could use GetParams
 (defn arguments [function]
-  (lazy-seq (cons (arg/first function)
-                  (take-while deref
-                              (repeatedly #(arg/next function))))))
+  (let [first-arg (arg/first function)]
+    (lazy-seq (cons first-arg
+                    (take-while deref
+                                (iterate arg/next first-arg))))))
 
 ;; could use GetBasicBlocks
 (defn basic-blocks [function]
-  (lazy-seq (cons (bb/first function)
-                  (take-while deref
-                              (repeatedly #(bb/next function))))))
+  (let [first-bb (bb (first function))]
+    (lazy-seq (cons first-bb
+                    (take-while deref
+                                (iterate bb/next first-bb))))))
 
 ;; attrs
 (defn get-attr [function]

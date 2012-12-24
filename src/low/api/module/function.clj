@@ -21,6 +21,7 @@
   (LLVM :GetPreviousFunction module))
 
 (defn functions [module]
-  (lazy-seq (cons (first module)
-                  (take-while deref
-                              (repeatedly #(next module))))))
+  (let [first-f (first module)]
+    (lazy-seq (cons first-f
+                    (take-while deref
+                                (iterate next first-f))))))

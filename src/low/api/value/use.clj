@@ -5,13 +5,14 @@
 (defn first [value]
   (LLVM :GetFirstUse value))
 
-(defn next [value]
-  (LLVM :GetNextUse value))
+(defn next [use]
+  (LLVM :GetNextUse use))
 
 (defn uses [value]
-  (lazy-seq (cons (first value)
-                  (take-while deref ;; while not nil
-                              (repeatedly #(next value))))))
+  (let [first-use (first value)]
+    (lazy-seq (cons first-use
+                    (take-while deref ;; while not nil
+                                (iterate next value))))))
 
 (defn user [use]
   (LLVM :GetUser use))
