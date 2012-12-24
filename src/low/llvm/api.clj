@@ -90,7 +90,8 @@
 (defpointers
   execution-engine*
   value*
-  type*)
+  type*
+  basic-block*)
 
 (typedef user :value)
 
@@ -398,6 +399,18 @@
    [:MDNodeInContext [:context :value* :uint] :value]
    [:MDNode [:value* :uint] :value]
    [:GetMDString [:value :int*] :constchar*]
+   [:BasicBlockAsValue [:basic-block] :value]
+   [:ValueIsBasicBlock [:value] :bool]
+   [:ValueAsBasicBlock [:value] :basic-block]
+   [:GetBasicBlockParent [:basic-block] :value]
+   [:GetBasicBlockTerminator [:basic-block] :value]
+   [:CountBasicBlocks [:value] :unsigned]
+   [:GetBasicBlocks [:value :basic-block*] :void]
+   [:GetFirstBasicBlock [:value] :basic-block]
+   [:GetLastBasicBlock [:value] :basic-block]
+   [:GetNextBasicBlock [:basic-block] :basic-block]
+   [:GetPreviousBasicBlock [:basic-block] :basic-block]
+   [:GetEntryBasicBlock [:value] :basic-block]
    ;; PassManager
    [:CreatePassManager [] :pass-manager]
    [:CreateFunctionPassManagerForModule [:module] :pass-manager]

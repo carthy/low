@@ -1,6 +1,7 @@
 (ns low.api.value.function
   (:require [low.llvm :refer [LLVM]]
-            [low.api.value.function.argument :as arg]))
+            [low.api.value.function.argument :as arg]
+            [low.api.value.function.basic-block :as bb]))
 
 (defn delete! [function]
   (LLVM :DeleteFunction function))
@@ -25,6 +26,12 @@
   (lazy-seq (cons (arg/first function)
                   (take-while deref
                               (repeatedly #(arg/next function))))))
+
+;; could use GetBasicBlocks
+(defn basic-blocks [function]
+  (lazy-seq (cons (bb/first function)
+                  (take-while deref
+                              (repeatedly #(bb/next function))))))
 
 ;; attrs
 (defn get-attr [function]
