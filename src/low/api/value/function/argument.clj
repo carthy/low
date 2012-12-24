@@ -33,11 +33,11 @@
   (LLVM :GetParamParent param))
 
 ;; attrs
-(defn get-addr [param]
+(defn get-attr [param]
   (LLVM :GetAttribute param))
 
 (defn add-attr [param attr]
-  (LLVM :AddAttribute param addr))
+  (LLVM :AddAttribute param attr))
 
 (defn del-attr [param attr]
   (LLVM :RemoveAttribute param attr))

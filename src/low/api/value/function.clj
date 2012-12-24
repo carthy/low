@@ -20,11 +20,11 @@
   (LLVM :SetGC function GC))
 
 ;; attrs
-(defn get-addr [function]
+(defn get-attr [function]
   (LLVM :GetFunctionAttr function))
 
 (defn add-attr [function attr]
-  (LLVM :AddFunctionAttr function addr))
+  (LLVM :AddFunctionAttr function attr))
 
 (defn del-attr [function attr]
   (LLVM :RemoveFunctionAttr function attr))
