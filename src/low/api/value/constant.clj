@@ -3,13 +3,6 @@
   (:require [low.llvm :refer [LLVM]]
             [low.utils :refer [camel-case]]))
 
-;; do those belong here?
-(defn sizeof [type]
-  (LLVM :SizeOf type))
-
-(defn alignof [type]
-  (LLVM :AlignOf type))
-
 (defn ^:private LLVMC [op & args]
   (apply LLVM (->> op name (str "Const") keyword) args))
 

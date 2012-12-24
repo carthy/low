@@ -12,11 +12,17 @@
 (defn sized? [t]
   (LLVM :TypeIsSized t))
 
+(defn size [type]
+  (LLVM :SizeOf type))
+
 (defn context [t]
   (LLVM :GetTypeContext t))
 
 (defn elements-type [sequential]
   (LLVM :GetElementType sequential))
+
+(defn alignof [type]
+  (LLVM :AlignOf type))
 
 (defn integer
   ([] (LLVM :Int32Type))
