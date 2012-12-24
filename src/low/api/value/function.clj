@@ -1,5 +1,6 @@
 (ns low.api.value.function
-  (:require [low.llvm :refer [LLVM]]))
+  (:require [low.llvm :refer [LLVM]]
+            [low.api.value.function.argument :as arg]))
 
 (defn delete! [function]
   (LLVM :DeleteFunction function))
@@ -18,6 +19,12 @@
 
 (defn GC! [function GC]
   (LLVM :SetGC function GC))
+
+;; could use GetParams
+(defn arguments [function]
+  (lazy-seq (cons (arg/first function)
+                  (take-while deref
+                              (repeatedly #(arg/next function))))))
 
 ;; attrs
 (defn get-attr [function]

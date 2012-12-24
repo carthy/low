@@ -20,12 +20,6 @@
 (defn prev [function]
   (LLVM :GetPreviousParam function))
 
-;; could use GetParams
-(defn params [function]
-  (lazy-seq (cons (first function)
-                  (take-while deref
-                              (repeatedly #(next function))))))
-
 (defn alignment! [param alignment]
   (LLVM :SetParamAlignment param alignment))
 
