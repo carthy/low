@@ -106,9 +106,9 @@
 (defmacro defenum [name coll]
   `(let [coll# ~coll
          r-coll# (zipmap (get-values coll#) (get-keys coll#))
-         bind-f# (fn [x#] (or (get coll# x#)
+         bind-f# (fn [x#] (or (first (find coll# x#))
                               (get r-coll# x#)))
-         return-f# #(coll# %)]
+         return-f# #(get coll# %)]
      (typedef ~name :int return-f# bind-f#)))
 
 (defmacro defopaques [& types]
