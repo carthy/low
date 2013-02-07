@@ -14,8 +14,14 @@
 (defn last [function]
   (LLVM :GetLastBasicBlock function))
 
-(defn next [function]
-  (LLVM :GetNextBasicBlock function))
+(defn append
+  ([function name]
+     (LLVM :AppendBasickBlock function name))
+  ([context function name]
+     (LLVM :AppendBasickBlockInContext context function name)))
 
-(defn prev [function]
-  (LLVM :GetPreviousBasicBlock function))
+(defn insert
+  ([function name]
+     (LLVM :InsertBasickBlock function name))
+  ([context function name]
+     (LLVM :InsertBasickBlockInContext context function name)))

@@ -1,7 +1,8 @@
 (ns low.api.value.function
   (:require [low.llvm :refer [LLVM]]
             [low.api.value.function.argument :as arg]
-            [low.api.value.function.basic-block :as bb]))
+            [low.api.value.function.basic-block :as fbb]
+            [low.api.value.basic-block :as bb]))
 
 (defn delete! [function]
   (LLVM :DeleteFunction function))
@@ -30,7 +31,7 @@
 
 ;; could use GetBasicBlocks
 (defn basic-blocks [function]
-  (let [first-bb (bb (first function))]
+  (let [first-bb (fbb/first function)]
     (lazy-seq (cons first-bb
                     (take-while deref
                                 (iterate bb/next first-bb))))))
