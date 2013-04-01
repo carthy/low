@@ -80,7 +80,7 @@
 (def ^:private arr
   (fn [coll]
     (if (coll? coll)
-      (to-array coll)
+      (into-array Pointer (map deref coll))
       coll)))
 
 (defn ^:private adjust [types args]
