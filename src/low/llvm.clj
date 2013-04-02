@@ -1,6 +1,7 @@
 (ns low.llvm
   (:refer-clojure :exclude [type])
-  (:require [low.native :refer :all :rename {defenum defenum*}]))
+  (:require [low.native :refer :all :rename {defenum defenum*}]
+            [low.native.utils :refer [load-lib]]))
 
 (defonce ^:private llvm-function-map (atom {}))
 (defonce ^:private llvm-lib (promise))
@@ -8,7 +9,8 @@
 
 (defn import-llvm-function [f-name args ret-type]
   (swap! llvm-function-map assoc f-name
-         (import-function @llvm-lib (str "LLVM" (name f-name)) args ret-type)))
+         (import-function @llvm-lib
+                          (keyword (str "LLVM" (name f-name))) args ret-type)))
 
 (defmacro defenum [n & args]
   (if (set? (first args))
