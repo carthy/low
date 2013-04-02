@@ -36,9 +36,10 @@
 (defn native-type? [x]
   (instance? NativeType x))
 
-(defn ^:private register-type [name type ret-f bind-f]
+(defn register-type [name type ret-f bind-f]
   {:pre [(keyword? name)
-         (class? type)]}
+         (or (class? type)
+             (keyword? type))]}
   (swap! type-map assoc name
          (->NativeType name type ret-f bind-f)))
 
@@ -165,7 +166,10 @@
 
 (defn internal-type [type]
   {:pre [(keyword? type)]}
-  (:type (@type-map type)))
+  (let [t (:type (@type-map type))]
+    (if (keyword? t)
+      (recur t)
+      t)))
 
 (defn ^:private adjust [types args]
   (map (fn [type val]
