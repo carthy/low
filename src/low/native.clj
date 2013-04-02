@@ -1,5 +1,7 @@
 (ns low.native
-  (:require [low.utils :refer :all])
+  (:refer-clojure :exclude [keys vals])
+  (:require [low.native.utils :refer [native-long] :as u]
+            [low.utils :refer :all :exclude [native-long]])
   (:import (clojure.lang IDeref)
            (java.io Writer)
            (java.nio ByteBuffer IntBuffer CharBuffer ByteOrder Buffer
@@ -7,231 +9,213 @@
            (com.sun.jna NativeLong Pointer WString NativeLibrary
                         Memory Function)))
 
-(declare expr? ret-f bind-f make-expr register-type)
-
-;;; core abstractions ;;;
 (defonce type-map (atom {}))
 
-(defrecord Type [name type ret-f bind-f])
+(defprotocol Type
+  (-bind [this v]))
 
-(defrecord Expr [val type #_err #_out]
+(defprotocol Value
+  (return [this]))
+
+(defrecord NativeValue [internal-value type]
+  Value
+  (return [this]
+    ((or (:ret-f (@type-map type))
+         identity) internal-value))
+
   IDeref
-  (deref [this]
-    ((ret-f type) val)))
+  (deref [this] (return this)))
 
-;;; print-methods ;;;
-(defmethod print-method Type [^Type t ^Writer writer]
-  (.write writer (str "<Type: " (:name t) " -> " (:type t) ">")))
+(defn native-value? [x]
+  (instance? NativeValue x))
 
-(defmethod print-method Expr [^Expr t ^Writer writer]
-  (.write writer (str "<Expr: " (or @t
-                                    (if (false? @t)
-                                      "false"
-                                      "nil")) " (type: "))
-  (print-method (@type-map (:type t)) writer)
-  (.write writer ")>"))
+(defrecord NativeType [name type ret-f bind-f]
+  Type
+  (-bind [this v] (->NativeValue (bind-f v) name)))
 
-;;; private helpers ;;;
-(def ^:private native-long
-  (case NativeLong/SIZE
-    4 [Integer/TYPE int]
-    8 [Long/TYPE long]))
+(defn native-type? [x]
+  (instance? NativeType x))
 
-(def ^:private native-long-buffer
-  (case NativeLong/SIZE
-    4 IntBuffer
-    8 LongBuffer))
+(defn ^:private register-type [name type ret-f bind-f]
+  {:pre [(keyword? name)
+         (class? type)]}
+  (swap! type-map assoc name
+         (->NativeType name type ret-f bind-f)))
 
-(defn ^:private bind-f [t]
-  (or (:bind-f (@type-map t))
-      identity))
+(defmacro typedef
+  [name type & {:keys [ret bind]
+                :or {ret identity
+                     bind identity}}]
+  {:pre [(symbol? name)]}
+  (list `register-type (keyword name) type ret bind))
 
-(defn ^:private ret-f [t]
-  (or (:ret-f (@type-map t))
-      identity))
+(typedef void Void/TYPE)
+(typedef bool Boolean/TYPE
+         :bind boolean)
+(typedef char Byte/TYPE
+         :bind byte)
+(typedef wchar Character/TYPE
+         :bind char)
+(typedef short Short/TYPE
+         :bind short)
+(typedef int Integer/TYPE
+         :bind int)
+(typedef long (:class native-long)
+         :bind (:cast native-long))
+(typedef longlong Long/TYPE
+         :bind long)
+(typedef float Float/TYPE
+         :bind float)
+(typedef double Double/TYPE
+         :bind double)
+(typedef uchar Byte/TYPE
+         :ret u/parse-unsigned-number
+         :bind (pos-or (fn [x] (.byteValue x))))
+(typedef uint (:class native-long)
+         :ret u/parse-unsigned-number
+         :bind (pos-or (:value native-long)))
+(typedef ulonglong Long/TYPE
+         :ret u/parse-unsigned-number
+         :bind (pos-or (fn [x] (.longValue x))))
 
-(defn ^:private parse-unsigned-number [x]
-  (->> x Long/toHexString (str "0x") read-string))
+(typedef void* Pointer)
+(typedef char* ByteBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff ByteBuffer Byte/TYPE))
+(typedef wchar*  CharBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff CharBuffer Character/TYPE))
+(typedef const_char* String)
+(typedef const_wchar* WString
+         :ret str)
+(typedef short* ShortBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff ShortBuffer Short/TYPE))
+(typedef int* IntBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff IntBuffer Integer/TYPE))
+(typedef long* (:buffer native-long)
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff (:buffer native-long) (:class native-long)))
+(typedef longlong* LongBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff LongBuffer Long/TYPE))
+(typedef float* FloatBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff FloatBuffer Float/TYPE))
+(typedef double* DoubleBuffer
+         :ret u/buff-to-vec
+         :bind (u/seq-to-buff DoubleBuffer Double/TYPE))
+(typedef uchar* ByteBuffer
+         :ret u/unsigned-buff-to-vec
+         :bind (comp (u/seq-to-buff ByteBuffer Byte/TYPE)
+                     (partial mapv (pos-or (fn [x] (.byteValue x))))))
+(typedef uint* (:buffer native-long)
+         :ret u/unsigned-buff-to-vec
+         :bind (comp (u/seq-to-buff (:buffer native-long) (:class native-long))
+                     (partial mapv (pos-or (:value native-long)))))
+(typedef ulonglong* LongBuffer
+         :ret u/unsigned-buff-to-vec
+         :bind (comp (u/seq-to-buff LongBuffer Long/TYPE)
+                     (partial mapv (pos-or (fn [x] (.longValue x))))))
 
-(defn ^:private uchar-f [x]
-  (if (neg? x)
-    (.byteValue x)
-    x))
 
-(defn ^:private uint-f [x]
-  (if (neg? x)
-    (if (= long (second native-long)) (.longValue x) (.intValue x))
-    x))
+(defmacro alias-typedef [alias type]
+  {:pre [(every? symbol? [alias type])]}
+  `(let [type# (@type-map ~(keyword type))]
+     (typedef ~alias (:type type#)
+              :ret (:ret-f type#)
+              :bind (:bind-f type#))))
 
-(defn ^:private ulonglong-f [x]
-  (if (neg? x)
-    (.longValue x)
-    x))
+(alias-typedef byte char)
+(alias-typedef byte* char*)
+(alias-typedef size long)
+(alias-typedef size* long*)
+(alias-typedef uint8 uchar)
+(alias-typedef uint64 ulonglong)
 
-(defn ^:private recast-arr [buf type]
-  (fn [seq]
-    (if (seq? seq)
-      (eval `(. ~buf wrap (into-array ~type '~seq)))
-      seq)))
+(defmacro defpointer [type]
+  {:pre [(symbol? type)]}
+  `(typedef ~type Pointer :bind u/arr))
 
-(def ^:private buff-vec
-  (fn [buf] (vec (.array buf))))
+(defpointer char**)
 
-(def ^:private arr
-  (fn [coll]
-    (if (coll? coll)
-      (into-array Pointer (map deref coll))
-      coll)))
-
-(defn ^:private adjust [types args]
-  (map (fn [type val]
-         (if (expr? val)
-           val (make-expr val type)))
-       types args))
-
-(defn ^:private matching-types [args r]
-  (and (= (count args) (count r))
-       (every? true? (map = args (map :type r)))))
-
-(def ^:private parse-unsigned-buff
-  (comp (partial mapv parse-unsigned-number) buff-vec))
-
-;;; def macros ;;;
-(defmacro typedef [name type & [ret-f bind-f]]
-  (let [name (keyword name)]
-    `(register-type '~name ~type
-                ~(or ret-f identity)
-                ~(or bind-f identity))))
+(defmacro defopaque [type]
+  {:pre [(symbol? type)]}
+  `(typedef ~type Pointer))
 
 (defmacro defenum [name coll]
   `(let [coll# ~coll
-         r-coll# (zipmap (get-values coll#) (get-keys coll#))
+         r-coll# (zipmap (vals coll#)
+                         (keys coll#))
          bind-f# (fn [x#] (or (first (find coll# x#))
-                              (get r-coll# x#)))
+                             (get r-coll# x#)))
          return-f# #(get coll# %)]
-     (typedef ~name :int return-f# bind-f#)))
+     (typedef ~name int :ret return-f# :bind bind-f#)))
 
-(defmacro defopaques [& types]
-  (cons 'do
-        (for [type types]
-          `(typedef ~type Pointer identity identity))))
+(defn bind [type-name val]
+  {:pre [(keyword? type-name)]}
+  (if-let [type (@type-map type-name)]
+    (-bind type val)
+    val))
 
-(defmacro defpointers [& types]
-  (cons 'do
-        (for [type types]
-          `(typedef ~type Pointer identity ~arr))))
+(defn value [v type]
+  {:pre [(keyword? type)]}
+  (bind type v))
 
-;;; helpers ;;;
-(defn type? [t]
-  (instance? Type t))
+(defn internal-type [type]
+  {:pre [(keyword? type)]}
+  (:type (@type-map type)))
 
-(defn expr? [t]
-  (instance? Expr t))
+(defn ^:private adjust [types args]
+  (map (fn [type val]
+         (if (native-value? val)
+           val
+           (value val type)))
+       types args))
 
-(defn make-expr [val type]
-  (->Expr (if (expr? val) val ((bind-f type) val)) type))
+(defn ^:private matching-types [args r]
+  (= args (map :type r)))
 
-(defn register-type [name type ret-f bind-f]
-  (swap! type-map assoc name
-         (->Type name type ret-f bind-f)))
-
-(defn internal-type [t]
-  (let [t (if (expr? t) (:type t) t)]
-    (if (keyword? t) ;; an alias
-      (internal-type (:type (@type-map t)))
-      (if (class? t)
-        t
-        (class t)))))
-
-;;; api functions ;;;
-(defn load-lib [lib]
-  (NativeLibrary/getInstance lib))
-
-(defn get-function [lib name]
-  (if (string? lib)
-    (Function/getFunction ^String lib ^String name)
-    (.getFunction ^NativeLibrary lib name)))
-
-(defn invoke-function [f ret-class args]
-  (if (= Void/TYPE ret-class)
-    (.invoke ^Function f (to-array args))
-    (.invoke ^Function f ret-class (to-array args))))
-
-(defn import-function [lib name args ret-type]
-  (let [f (get-function lib name)
+(defn import-function [lib f-name args ret-type]
+  {:pre [(keyword? ret-type)
+         (keyword? f-name)
+         (and (vector? args)
+              (every? keyword? args))]}
+  (let [name (name f-name)
+        f (u/get-function lib name)
         ret-class (internal-type ret-type)]
     (fn [& r]
+      {:pre (= (count args) (count r))}
       (let [r (adjust args r)]
         (assert (matching-types args r))
-        (let [ret (invoke-function f ret-class (mapv :val r))]
-          (make-expr ret ret-type))))))
+        (let [ret (u/invoke f ret-class (mapv :internal-value r))]
+          (value ret ret-type))))))
 
 (defn pointer
   ([type] (pointer type 1))
   ([type n]
+     {:pre [(keyword? type)]}
      (let [t (keyword (str (name type) "*"))
            type (t @type-map)]
        (if (and type ((supers (:type type)) Buffer))
-         (make-expr (eval (list '. (:type type) 'allocate n)) t)
-         (make-expr (doto (Memory. (* n Pointer/SIZE)) .clear) t)))))
+         (value (eval (list '. (:type type) 'allocate n)) t)
+         (value (doto (Memory. (* n Pointer/SIZE)) .clear) t)))))
 
 (defn & [pointer]
+  {:pre [(native-type? pointer)]}
   (let [t-name (name (:type pointer))]
-    (make-expr (.getPointer ^Pointer @pointer 0)
-               (keyword (.substring t-name 0 (dec (.length t-name)))))))
+    (value (.getPointer ^Pointer @pointer 0)
+           (keyword (subs t-name 0 (dec (count t-name)))))))
 
 (defn to-str
   ([ptr]
+     {:pre [(native-type? ptr)]}
      (.getString ^Pointer @ptr 0))
   ([ptr len]
+     {:pre [(native-type? ptr)]}
      (.getString ^Pointer @ptr 0 len)))
 
-(defn to-ptr-vec [ptr cnt]
-  (vec (.getPointerArray ^Pointer @ptr 0 cnt)))
-
-;;; initialize type map;;:
-(when (empty? @type-map)
-  (dorun
-   (map (partial apply register-type)
-        [[:void Void/TYPE identity identity]
-         [:bool Boolean/TYPE identity boolean]
-         [:char Byte/TYPE identity byte]
-         [:wchar_t Character/TYPE identity char]
-         [:short Short/TYPE identity short]
-         [:int Integer/TYPE identity int]
-         [:long (first native-long) identity (second native-long)]
-         [:longlong Long/TYPE identity long]
-         [:float Float/TYPE identity float]
-         [:double Double/TYPE identity double]
-         [:uchar Byte/TYPE parse-unsigned-number uchar-f]
-         [:uint (first native-long) parse-unsigned-number uint-f]
-         [:ulonglong Long/TYPE parse-unsigned-number ulonglong-f]
-         ;;pointers
-         [:void* Pointer identity identity]
-         [:char* ByteBuffer buff-vec (recast-arr ByteBuffer Byte/TYPE)]
-         [:wchar_t*  CharBuffer buff-vec (recast-arr CharBuffer Character/TYPE)]
-         [:constchar* String identity identity]
-         [:constwcahar_t WString str identity]
-         [:short* ShortBuffer buff-vec (recast-arr ShortBuffer Short/TYPE)]
-         [:int* IntBuffer buff-vec (recast-arr IntBuffer Integer/TYPE)]
-         [:long* native-long-buffer buff-vec (recast-arr native-long-buffer (first native-long))]
-         [:longlong* LongBuffer buff-vec (recast-arr LongBuffer Long/TYPE)]
-         [:float* FloatBuffer buff-vec (recast-arr FloatBuffer Float/TYPE)]
-         [:double* DoubleBuffer buff-vec (recast-arr DoubleBuffer Double/TYPE)]
-         [:uchar* ByteBuffer parse-unsigned-buff (comp (recast-arr ByteBuffer Byte/TYPE)
-                                                       (partial mapv uchar-f)
-                                                       buff-vec)]
-         [:uint* native-long-buffer parse-unsigned-buff (comp (recast-arr native-long-buffer (first native-long))
-                                                              (partial mapv uint-f)
-                                                              buff-vec)]
-         [:ulonglong* LongBuffer parse-unsigned-buff (comp (recast-arr LongBuffer Long/TYPE)
-                                                           (partial mapv ulonglong-f)
-                                                           buff-vec)]]))
-
-  (typedef byte :char)
-  (typedef byte* :char*)
-  (typedef size_t :long)
-  (typedef size_t* :long*)
-  (typedef uint8_t :uchar)
-  (typedef uint64_t :ulonglong)
-  (defpointers char**))
+(defn ptr-to-vec [pointer cnt]
+  {:pre [(native-type? pointer)]}
+  (vec (.getPointerArray ^Pointer @pointer 0 cnt)))
