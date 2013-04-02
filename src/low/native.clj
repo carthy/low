@@ -152,7 +152,7 @@
          bind-f# (fn [x#] (or (first (find coll# x#))
                              (get r-coll# x#)))
          return-f# #(get coll# %)]
-     (typedef ~name int :ret return-f# :bind bind-f#)))
+     (typedef ~name Integer/TYPE :ret return-f# :bind bind-f#)))
 
 (defn bind [type-name val]
   {:pre [(keyword? type-name)]}
