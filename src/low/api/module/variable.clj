@@ -9,22 +9,27 @@
   ([module type name address-space]
      (LLVM :AddGlobalInAddressSpace module type name address-space)))
 
-(defn get [module name]
+(defn get
   "Get the global var from the module"
+  [module name]
   (LLVM :GetNamedGlobal module name))
 
-(defn first [module]
+(defn first
   "Return the first global var from the module"
+  [module]
   (LLVM :GetFirstGlobal module))
 
-(defn last [module]
+(defn last
   "Return the last global var from the module"
+  [module]
   (LLVM :GetLastGlobal module))
 
-(defn next [var]
+(defn next
   "Return the next global var"
+  [var]
   (LLVM :GetNextGlobal var))
 
-(defn prev [var]
+(defn prev
   "Return the previous global var"
+  [var]
   (LLVM :GetPreviousGlobal var))

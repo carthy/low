@@ -2,20 +2,24 @@
   (:refer-clojure :exclude [get])
   (:require [low.llvm :refer [LLVM]]))
 
-(defn create []
+(defn create
   "Create a context"
+  []
   (LLVM :ContextCreate))
 
-(defn get []
+(defn get
   "Returns the global context"
+  []
   (LLVM :GetGlobalContext))
 
-(defn destroy! [context]
+(defn destroy!
   "Destroy the context"
+  [context]
   (LLVM :ContextDispose context))
 
-(defmacro with-destroy [[& ctxs] & body]
+(defmacro with-destroy
   "Execute the body and destroy the context"
+  [[& ctxs] & body]
   `(let [~@ctxs]
      (try ~@body
           (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))

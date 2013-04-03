@@ -10,18 +10,22 @@
   "Get the function from the module"
   (LLVM :GetNamedFunction module name))
 
-(defn first [module]
+(defn first
   "Return the first function in the module"
+  [module]
   (LLVM :GetFirstFunction module))
 
-(defn last [module]
+(defn last
   "Return the last function in the module"
+  [module]
   (LLVM :GetLastFunction module))
 
-(defn next [function]
+(defn next
   "Return the next function"
+  [function]
   (LLVM :GetNextFunction function))
 
-(defn prev [function]
+(defn prev
   "Return the previous function"
+  [function]
   (LLVM :GetPreviousFunction function))

@@ -14,30 +14,36 @@
   ([^String name context]
      (LLVM :ModuleCreateWithNameInContext name context)))
 
-(defn destroy! [module]
+(defn destroy!
   "Destroy the module"
+  [module]
   (LLVM :DisposeModule module))
 
-(defmacro with-destroy [[& mds] & body]
+(defmacro with-destroy
   "Execute the body and destroy the module"
+  [[& mds] & body]
   `(let [~@mds]
      (try ~@body
           (finally ~@(map #(list `destroy! %) (take-nth 2 mds))))))
 
-(defn target [module]
+(defn target
   "Get the module target"
+  [module]
   (LLVM :GetTarget module))
 
-(defn target! [module triple]
+(defn target!
   "Set the module target"
+  [module triple]
   (LLVM :SetTarget module triple))
 
-(defn data-layout [module]
+(defn data-layout
   "Get the module data layout"
+  [module]
   (LLVM :GetDataLayout module))
 
-(defn data-layout! [module ^String triple]
+(defn data-layout!
   "Set the module data layout"
+  [module ^String triple]
   (LLVM :SetDataLayout module triple))
 
 (defn link [module module-to-link preserve?]
@@ -48,20 +54,24 @@
     (assoc (LLVM :LinkModules module module-to-link preserev? out)
       :out out)))
 
-(defn dump! [module]
+(defn dump!
   "Dump a module"
+  [module]
   (LLVM :DumpModule module))
 
-(defn inline-asm! [module ^String asm]
+(defn inline-asm!
   "Set the module-scope inline assembly blocks"
+  [module ^String asm]
   (LLVM :SetModuleInlineAsm module asm))
 
-(defn context [module]
+(defn context
   "Get the context of the module"
+  [module]
   (LLVM :GetModuleContext module))
 
-(defn type [module ^String name]
+(defn type
   "Returns the type with the name `name` in the module"
+  [module ^String name]
   (LLVM :GetTypeByName module name))
 
 (defn verify [module failure-action]
@@ -71,22 +81,25 @@
     (assoc (LLVM :VerifyModule module failure-action err)
       :err err)))
 
-(defn functions [module]
+(defn functions
   "Return a lazy seq of the functions of the module"
+  [module]
   (let [first-f (f/first module)]
     (lazy-seq (cons first-f
                     (take-while deref
                                 (iterate f/next first-f))))))
 
-(defn variables [module]
+(defn variables
   "Return a lazy seq of the global vars of the module"
+  [module]
   (let [first-v (v/first module)]
     (lazy-seq (cons first-v
                     (take-while deref
                                 (iterate v/next first-v))))))
 
-(defn operands [module name]
+(defn operands
   "Return a vector containing the named metadata operands for the module"
+  [module name]
   {:pre [(>= @llvm-version 3.2)]}
   (let [count @(m/count module name)
         ret (pointer :value count)]
