@@ -145,6 +145,12 @@
   {:pre [(symbol? type)]}
   `(typedef ~type Pointer))
 
+(defmacro defpointers [& types]
+  (cons 'do (for [type types] `(defpointer ~type))))
+
+(defmacro defopaques [& types]
+  (cons 'do (for [type types] `(defopaque ~type))))
+
 (defmacro defenum [name coll]
   `(let [coll# ~coll
          r-coll# (zipmap (vals coll#)
