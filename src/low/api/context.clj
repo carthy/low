@@ -1,25 +1,21 @@
 (ns low.api.context
+  (:refer-clojure :exclude [get])
   (:require [low.llvm :refer [LLVM]]))
 
 (defn create []
+  "Create a context"
   (LLVM :ContextCreate))
 
-(defn context
-  ([]
-     (LLVM :GetGlobalContext))
-  ([module]
-     (LLVM :GetModuleContext module)))
+(defn get []
+  "Returns the global context"
+  (LLVM :GetGlobalContext))
 
 (defn destroy! [context]
+  "Destroy the context"
   (LLVM :ContextDispose context))
 
 (defmacro with-destroy [[& ctxs] & body]
+  "Execute the body and destroy the context"
   `(let [~@ctxs]
      (try ~@body
           (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))
-
-(defn metadata-kind-id
-  ([string]
-     (LLVM :GetMDKindID string (count string)))
-  ([context string]
-     (LLVM :GetMDKindIDInContext context string (count string))))
