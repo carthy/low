@@ -6,25 +6,40 @@
             [low.api.type.floating :as floating]
             [low.api.type.struct :as struct]))
 
-(defn type [t]
+(defn type
+  "Return the type-kind for a given type"
+  [t]
   (LLVM :GetTypeKind t))
 
-(defn sized? [t]
+(defn sized?
+  "Return true if the type is sised"
+  [t]
   (LLVM :TypeIsSized t))
 
-(defn size [type]
+(defn size
+  "Return the size of the type"
+  [type]
   (LLVM :SizeOf type))
 
-(defn context [t]
+(defn context
+  "Return the context to which this type instance is associated."
+  [t]
   (LLVM :GetTypeContext t))
 
-(defn elements-type [sequential]
+(defn elements-type
+  "Return the type of elements within a sequential type"
+  [sequential]
   (LLVM :GetElementType sequential))
 
-(defn alignof [type]
+(defn alignof
+  "Return the alignment of the type"
+  [type]
   (LLVM :AlignOf type))
 
 (defn integer
+  "Return the an integer type, the default size is 32.
+   Size can be specified as a number, or as a keyword.
+   See type.integer/types for valid keywords and their sizes"
   ([] (LLVM :Int32Type))
   ([bits-or-context]
      (if (number? bits-or-context)
@@ -46,6 +61,9 @@
          (integer context n)))))
 
 (defn floating
+  "Return the a floating type, the default type is float.
+   See type.floating/types for the list of valid types"
+  ([] (floating :float))
   ([type]
      {:pre [(floating/types type)
             (if (= :half type) (>= @llvm-version 3.1) true)]}
@@ -56,6 +74,7 @@
      (LLVM (keyword (str (floating/types type) "TypeInContext")) context)))
 
 (defn function
+  "Returns a function type with the specified signature"
   ([return-type [& arg-types]]
      (function return-type arg-types false))
   ([return-type [& arg-types] var-arg?]
@@ -106,3 +125,10 @@
 (defn X86-MMX
   ([] (LLVM :X86MMXType))
   ([context] (LLVM :X86MMXTypeInContext context)))
+
+(defn metadata-kind-id
+  "Returns the metadata kind id "
+  ([string]
+     (LLVM :GetMDKindID string (count string)))
+  ([context string]
+     (LLVM :GetMDKindIDInContext context string (count string))))
