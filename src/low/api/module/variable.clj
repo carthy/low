@@ -3,28 +3,28 @@
   (:require [low.llvm :refer [LLVM]]))
 
 (defn add
+  "Add the global var in the module"
   ([module type name]
      (LLVM :AddGlobal module type name))
   ([module type name address-space]
      (LLVM :AddGlobalInAddressSpace module type name address-space)))
 
-(defn variable [module name]
+(defn get [module name]
+  "Get the global var from the module"
   (LLVM :GetNamedGlobal module name))
 
 (defn first [module]
+  "Return the first global var from the module"
   (LLVM :GetFirstGlobal module))
 
 (defn last [module]
+  "Return the last global var from the module"
   (LLVM :GetLastGlobal module))
 
-(defn next [module]
-  (LLVM :GetNextGlobal module))
+(defn next [var]
+  "Return the next global var"
+  (LLVM :GetNextGlobal var))
 
-(defn prev [module]
-  (LLVM :GetPreviousGlobal module))
-
-(defn variables [module]
-  (let [first-v (first module)]
-    (lazy-seq (cons first-v
-                    (take-while deref
-                                (iterate next first-v))))))
+(defn prev [var]
+  "Return the previous global var"
+  (LLVM :GetPreviousGlobal var))
