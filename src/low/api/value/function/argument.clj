@@ -2,36 +2,58 @@
   (:refer-clojure :exclude [count get first last next])
   (:require [low.llvm :refer [LLVM]]))
 
-(defn count [function]
+(defn count
+  "Returns the number of arguments of the function"
+  [function]
   (LLVM :CountParams function))
 
-(defn get [function idx]
+(defn get
+  "Return the nth argument of the function"
+  [function idx]
   (LLVM :GetParam function idx))
 
-(defn first [function]
+(defn first
+  "Returns the first argument of the function"
+  [function]
   (LLVM :GetFirstParam function))
 
-(defn last [function]
+(defn last
+  "Returns the last argument of the function"
+  [function]
   (LLVM :GetLastParam function))
 
-(defn next [function]
+(defn next
+  "Returns the next argument of the function"
+  [function]
   (LLVM :GetNextParam function))
 
-(defn prev [function]
+(defn prev
+  "Returns the previous argument of the function"
+  [function]
   (LLVM :GetPreviousParam function))
 
-(defn alignment! [param alignment]
+(defn alignment!
+  "Sets the argument alignment"
+  [param alignment]
   (LLVM :SetParamAlignment param alignment))
 
-(defn function [param]
+(defn function
+  "Returns the function to which the artument belongs"
+  [param]
   (LLVM :GetParamParent param))
 
-;; attrs
-(defn get-attr [param]
-  (LLVM :GetAttribute param))
+;; attr
+(defn get-attr
+  "Get the parameter attribute"
+  [parameter]
+  (LLVM :GetAttribute parameter))
 
-(defn add-attr [param attr]
-  (LLVM :AddAttribute param attr))
+(defn add-attr
+  "Add an attribute to the parameter"
+  [parameter attr]
+  (LLVM :AddAttribute parameter attr))
 
-(defn del-attr [param attr]
-  (LLVM :RemoveAttribute param attr))
+(defn delete!-attr
+  "Deletes the parameter attribute"
+  [parameter attr]
+  (LLVM :RemoveAttribute parameter attr))
