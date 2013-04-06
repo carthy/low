@@ -18,7 +18,7 @@
   (LLVM :ContextDispose context))
 
 (defmacro with-destroy
-  "Executes the body and destroy the context"
+  "Executes the body and destroys the context"
   [[& ctxs] & body]
   `(let [~@ctxs]
      (try ~@body

@@ -1,7 +1,7 @@
 (ns low.api.module
   (:refer-clojure :exclude [type])
   (:require [low.llvm :refer [LLVM llvm-version]]
-            [low.native :refer [pointer & to-str ptr-to-vec]]
+            [low.native :refer [pointer to-str ptr-to-vec]]
             [low.api.module.function :as f]
             [low.api.module.variable :as v]
             [low.api.module.named-metadata-operand :as m]))
@@ -20,7 +20,7 @@
   (LLVM :DisposeModule module))
 
 (defmacro with-destroy
-  "Executes the body and destroy the module"
+  "Executes the body and destroys the module"
   [[& mds] & body]
   `(let [~@mds]
      (try ~@body
@@ -52,7 +52,7 @@
   {:pre [(>= @llvm-version 3.2)]}
   (let [out (pointer :char*)]
     (assoc (LLVM :LinkModules module module-to-link preserev? out)
-      :out out)))
+      :out (to-str out))))
 
 (defn dump!
   "Dumps the module"
@@ -79,7 +79,7 @@
    in the returned NativeValue record"
   (let [err (pointer :char*)]
     (assoc (LLVM :VerifyModule module failure-action err)
-      :err err)))
+      :err (to-str err))))
 
 (defn functions
   "Returns a lazy seq of the functions of the module"

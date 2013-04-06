@@ -4,6 +4,7 @@
             [low.llvm :refer [LLVM]]))
 
 (defn create
+  "Creates a pass manager"
   ([] (LLVM :CreatePassManager))
   ([module]
      (LLVM (if (= (:type module) :module)
@@ -11,26 +12,35 @@
              :CreateFunctionPassManager)
            module)))
 
-(defn destroy! [manager]
+(defn destroy!
+  "Destroys a pass manager"
+  [manager]
   (let [err (LLVM :FinalizeFunctionPassManager manager)]
-    (LLVM :DisposePassManager manager)
-    err))
+    (assoc (LLVM :DisposePassManager manager)
+      :err err)))
 
-(defmacro with-destroy [[& ctxs] & body]
+(defmacro with-destroy
+  "Executes the body and destroys the pass manager"
+  [[& ctxs] & body]
   `(let [~@ctxs]
      (try ~@body
           (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))
 
-(defn initialize [manager]
+(defn initialize
+  "Initializes the pass manager"
+  [manager]
   (LLVM :InitializeFunctionPassManager manager))
 
-(defn run [manager module-or-function]
+(defn run
+  "Runs the pss manager"
+  [manager module-or-function]
   (LLVM (if (= (:type module-or-function) :module)
           :RunPassManager
           :RunFunctionPassManager)
         manager module-or-function))
 
-(def valid-passes
+(def passes
+  "A set with all the valid passes "
   #{:always-inline :argument-promotion :constant-merge :dead-arg-elimination
     :function-attrs :function-inlining :global-dce :global-optimizer
     :ip-constant-propagation :prune-eh :ipsccp :internalize
@@ -61,9 +71,12 @@
    :scalar-repl-aggregates-with-threshold "ScalarReplAggregatesPassWithThreshold"
    :sscp "SSCPPass"})
 
-(defn add-pass [manager pass & args]
-  (when (valid-passes pass)
-   (let [pass (keyword (str "Add"
-                            (or (special-pass-name pass)
-                                (str (name (camel-case pass)) "Pass"))))]
-     (apply LLVM pass manager args))))
+(defn add-pass
+  "Adds a pass to the pass manager"
+  [manager pass & args]
+  {:pre [(keyword? pass)
+         (passes pass)]}
+  (let [pass (keyword (str "Add"
+                           (or (special-pass-name pass)
+                               (str (name (camel-case pass)) "Pass"))))]
+    (apply LLVM pass manager args)))
