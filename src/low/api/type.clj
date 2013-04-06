@@ -108,16 +108,19 @@
            element-types
            (count element-types) packed?)))
 
-(defn array [elements-type length]
+(defn array
   "Returns an array of the specified type and length"
+  [elements-type length]
   (LLVM :ArrayType elements-type length))
 
-(defn pointer [element-type address-space]
+(defn pointer
   "Returns a pointer to the specified type, in the address space"
+  [element-type address-space]
   (LLVM :PointerType element-type address-space))
 
-(defn vector [elements-type size]
+(defn vector
   "Returns a vector of the specified type and size"
+  [elements-type size]
   (LLVM :VectorType elements-type size))
 
 (defn void
