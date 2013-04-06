@@ -10,5 +10,5 @@
    :long 64})
 
 (defn width [int-type]
-  "Return the width of an integer type"
+  "Returns the width of an integer type"
   (LLVM :GetIntTypeWidth int-type))

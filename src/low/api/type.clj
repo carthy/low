@@ -7,37 +7,37 @@
             [low.api.type.struct :as struct]))
 
 (defn type
-  "Return the type-kind for a given type"
+  "Returns the type-kind for a given type"
   [t]
   (LLVM :GetTypeKind t))
 
 (defn sized?
-  "Return true if the type is sised"
+  "Returns true if the type is sised"
   [t]
   (LLVM :TypeIsSized t))
 
 (defn size
-  "Return the size of the type"
+  "Returns the size of the type"
   [type]
   (LLVM :SizeOf type))
 
 (defn context
-  "Return the context to which this type instance is associated."
+  "Returns the context to which this type instance is associated."
   [t]
   (LLVM :GetTypeContext t))
 
 (defn elements-type
-  "Return the type of elements within a sequential type"
+  "Returns the type of elements within a sequential type"
   [sequential]
   (LLVM :GetElementType sequential))
 
 (defn alignof
-  "Return the alignment of the type"
+  "Returns the alignment of the type"
   [type]
   (LLVM :AlignOf type))
 
 (defn integer
-  "Return the an integer type, the default size is 32.
+  "Returns the an integer type, the default size is 32.
    Size can be specified as a number, or as a keyword.
    See type.integer/types for valid keywords and their sizes"
   ([] (LLVM :Int32Type))
@@ -61,7 +61,7 @@
          (integer context n)))))
 
 (defn floating
-  "Return the a floating type, the default type is float.
+  "Returns the a floating type, the default type is float.
    See type.floating/types for the list of valid types"
   ([] (floating :float))
   ([type]

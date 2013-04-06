@@ -3,7 +3,7 @@
   (:require [low.llvm :refer [LLVM]]))
 
 (defn create
-  "Create a context"
+  "Creates a context"
   []
   (LLVM :ContextCreate))
 
@@ -18,7 +18,7 @@
   (LLVM :ContextDispose context))
 
 (defmacro with-destroy
-  "Execute the body and destroy the context"
+  "Executes the body and destroy the context"
   [[& ctxs] & body]
   `(let [~@ctxs]
      (try ~@body
