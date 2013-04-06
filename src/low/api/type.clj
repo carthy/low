@@ -84,6 +84,7 @@
 (declare opaque-struct)
 
 (defn struct
+  "Returns a struct with the specified signature"
   ([name element-types packed?]
      (struct (c/context) name element-types packed?))
   ([context name element-types packed?]
@@ -91,12 +92,14 @@
        (struct/body! element-types packed?))))
 
 (defn opaque-struct
+  "Returns an opaque struct"
   ([name]
      (opaque-struct (c/context) name))
   ([context name]
      (LLVM :StructCreateNamed context name)))
 
 (defn literal-struct
+  "Returns an anonymous struct"
   ([element-types packed?]
      (LLVM :StructType element-types
            (count element-types) packed?))
@@ -106,28 +109,34 @@
            (count element-types) packed?)))
 
 (defn array [elements-type length]
+  "Returns an array of the specified type and length"
   (LLVM :ArrayType elements-type length))
 
-(defn pointer [element-type adress-space]
-  (LLVM :PointerType element-type adress-space))
+(defn pointer [element-type address-space]
+  "Returns a pointer to the specified type, in the address space"
+  (LLVM :PointerType element-type address-space))
 
-(defn vector [elements-type length]
-  (LLVM :VectorType elements-type length))
+(defn vector [elements-type size]
+  "Returns a vector of the specified type and size"
+  (LLVM :VectorType elements-type size))
 
 (defn void
+  "Returns the void type"
   ([] (LLVM :VoidType))
   ([context] (LLVM :VoidTypeInContext context)))
 
 (defn label
+  "Returns the label type"
   ([] (LLVM :LabelType))
   ([context] (LLVM :LabelTypeInContext context)))
 
 (defn X86-MMX
+  "Returns the X86-MMX type"
   ([] (LLVM :X86MMXType))
   ([context] (LLVM :X86MMXTypeInContext context)))
 
 (defn metadata-kind-id
-  "Returns the metadata kind id "
+  "Returns the metadata kind id identified by the string"
   ([string]
      (LLVM :GetMDKindID string (count string)))
   ([context string]
