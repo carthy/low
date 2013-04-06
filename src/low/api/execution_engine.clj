@@ -31,8 +31,9 @@
   [engine]
   (LLVM :DisposeExecutionEngine engine))
 
-(defmacro with-destroy [[& ctxs] & body]
+(defmacro with-destroy
   "Executes the body and destroys the execution engine"
+  [[& ctxs] & body]
   `(let [~@ctxs]
      (try ~@body
           (finally ~@(map #(list `destroy! %) (take-nth 2 ctxs))))))
